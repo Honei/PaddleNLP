@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(leomax-tokenizer LANGUAGES CXX C)
+
+option(WITH_TESTING "compile leomax-tokenizer with unit testing" OFF)
+option(WITH_PYTHON "compile leomax-tokenizer with python interpreter" ON)
+
+add_definitions(-DLEXOMAX_TOKENIZER_LIB)
+
+set(TOKENIZERS_INSTALL_INCLUDE_DIR ${PROJECT_SOURCE_DIR})
+
+if(NOT CMAKE_BUILD_TYPE) 
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING 
+        "Choose the type of build, option are: Debug Release RelWithDebInfo MinSizeRel.")
+endif(NOT CMAKE_BUILD_TYPE)
+
+message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+
+
+set(CPP_PACKAGE_DIR ${CMAKE_BINARY_DIR}/cpp/leomax_tokenizer)
+
+set(TOKENIZER_CORE_NAME "core_tokenizers")
+
+set(TOKENIZER_CORE_LIBS_PATH "${TOKENIZER_CORE_PATH}/lib${TOKENIZER_CORE_NAME}.so")
+
+include_directories(${TOKENIZERS_INSTALL_INCLUDE_DIR})
+# 添加预定义的函数
+include(cmake/generic.cmake)
+
+###################################################################### 
+#########################添加 c++ 版本的 tokenizer #####################
+###################################################################### 
+add_subdirectory(leomax_tokenizer)
+
+if(WITH_PYTHON) 
+    # 编译 python 的库
+    add_subdirectory(python)
+endif(WITH_PYTHON)
