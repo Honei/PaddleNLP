@@ -16,3 +16,5 @@ __version__ = "1.0.0"
 from .tokenizer_impl import (
     SentencePieceBPELeoMaxTokenizer
 )
+
+from .c_wrap import *

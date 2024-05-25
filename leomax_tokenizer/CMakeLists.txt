@@ -27,12 +27,12 @@ include_directories(${TOKENIZERS_INSTALL_INCLUDE_DIR})
 # 添加预定义的函数
 include(cmake/generic.cmake)
 
-###################################################################### 
+######################################################################
 #########################添加 c++ 版本的 tokenizer #####################
-###################################################################### 
+######################################################################
 add_subdirectory(leomax_tokenizer)
 
-if(WITH_PYTHON) 
+if(WITH_PYTHON)
     # 编译 python 的库
     add_subdirectory(python)
 endif(WITH_PYTHON)

@@ -28,6 +28,7 @@ setup(
     packages=[
         "leomax_tokenizer",
         "leomax_tokenizer.tokenizer_impl",
+        "leomax_tokenizer.models"
         ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
