@@ -12,7 +12,9 @@ def get_version():
             break
     return version
 
-print(get_version())
+if os.name != "nt":
+    package_data = {"leomax_tokenizer": ["core_tokenizers.so"]}
+    package_data["leomax_tokenizer.libs"] = []
 
 long_description = "leomax-tokenizer Tokenizer Library written in C++ "
 setup(
@@ -30,6 +32,7 @@ setup(
         "leomax_tokenizer.tokenizer_impl",
         "leomax_tokenizer.models"
         ],
+    package_data=package_data,
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Operating System :: OS Independent",

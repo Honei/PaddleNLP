@@ -12,9 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 __version__ = "1.0.0"
-
+import os
 from .tokenizer_impl import (
     SentencePieceBPELeoMaxTokenizer
 )
 
+try:
+    # 获取当前文件夹路径
+    current_path = os.path.abspath(os.path.dirname(__file__))
+
+except:
+    pass
+
+# 引入c++的库core_tokenizers
+from . import core_tokenizers as C
 from .c_wrap import *

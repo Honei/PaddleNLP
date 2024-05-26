@@ -6,7 +6,7 @@ option(WITH_TESTING "compile leomax-tokenizer with unit testing" OFF)
 option(WITH_PYTHON "compile leomax-tokenizer with python interpreter" ON)
 
 add_definitions(-DLEXOMAX_TOKENIZER_LIB)
-
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(TOKENIZERS_INSTALL_INCLUDE_DIR ${PROJECT_SOURCE_DIR})
 
 if(NOT CMAKE_BUILD_TYPE) 
@@ -24,8 +24,16 @@ set(TOKENIZER_CORE_NAME "core_tokenizers")
 set(TOKENIZER_CORE_LIBS_PATH "${TOKENIZER_CORE_PATH}/lib${TOKENIZER_CORE_NAME}.so")
 
 include_directories(${TOKENIZERS_INSTALL_INCLUDE_DIR})
-# 添加预定义的函数
+
+# 添加预定义的函数以及第三方库需要的一些配置
+# config GIT_URL with github mirrors to speed up dependent repos clone
+option(GIT_URL "Git URL to clone dependent repos" ${GIT_URL})
+if(NOT GIT_URL)
+    set(GIT_URL "https://github.com")
+endif()
+
 include(cmake/generic.cmake)
+include(cmake/third_party.cmake)
 
 ######################################################################
 #########################添加 c++ 版本的 tokenizer #####################

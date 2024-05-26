@@ -1,9 +1,9 @@
-mkdir -p build_py39
+# mkdir -p build_py39
 
 for py_version in 9; do
     echo build_py3${py_version}
     cd build_py3${py_version}
-    rm -rf *
+    #rm -rf *
     platform="$(uname -s)"
     echo "platform: ${platform}"
     # if [[ $platform == Linux* ]]; then
