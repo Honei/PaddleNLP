@@ -1,16 +1,21 @@
-#include <pybind11/pybind11.h>
 #include <Python.h>
+#include <pybind11/pybind11.h>
+
+#include "pytokens.h"
+#include "pymodels.h"
 namespace leomax_tokenizer {
 namespace pybind {
-
-namespace py = pybind11;
+//namespace py = pybind11;
 
 int add(int i, int j) {
   return i + j;
 }
+
 PYBIND11_MODULE(core_tokenizers, m) {
-    m.doc() = "pybind11 example plugin";
+    m.doc() = "pybind11 leomax tokenizer core module";
     m.def("add", &add, "A function which adds two number");
+
+    bind_models(&m);
 }
 
 } // namespace pybind
