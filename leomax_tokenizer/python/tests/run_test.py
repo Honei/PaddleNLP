@@ -13,3 +13,6 @@ if __name__ == '__main__':
     print(leomax_tokenizer.core_tokenizers.add(1, 2))
     model = TestModel()
     print(model.tokenize("今天天气很不错"))
+
+    model = leomax_tokenizer.core_tokenizers.models.BPE()
+    print(model.tokenize("今天天气很不错"))
