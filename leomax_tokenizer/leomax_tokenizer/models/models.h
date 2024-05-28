@@ -6,12 +6,14 @@
 #define MODELS_MODELS_H
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <vector>
+#include "../core/base.h"
 
 namespace leomax_tokenizer {
 namespace models {
 class Model {
 public:
-  virtual void tokenize(const std::string& tokens) = 0;
+  virtual std::vector<core::Token> tokenize(const std::string& tokens) = 0;
 };
 
 }

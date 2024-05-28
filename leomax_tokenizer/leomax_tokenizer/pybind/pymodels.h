@@ -7,19 +7,32 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "../models/models.h"
+#include "../models/bpe.h"
 
 namespace leomax_tokenizer {
 namespace pybind {
 
 class PyModel : public models::Model {
 public:
-    virtual void tokenize(const std::string& tokens) override {
+    virtual std::vector<core::Token> tokenize(const std::string& tokens) override {
         PYBIND11_OVERRIDE_PURE(
-          void,
+          std::vector<core::Token>,
           models::Model,
           tokenize,
           tokens);
     }
+};
+
+
+class PyBPE : public models::BPE {
+virtual std::vector<core::Token> tokenize (
+    const std::string& tokens) override {
+    PYBIND11_OVERRIDE_PURE(
+        std::vector<core::Token>,
+        models::BPE,
+        tokenize,
+        tokens);
+}
 };
 
 void bind_models(pybind11::module* m);
