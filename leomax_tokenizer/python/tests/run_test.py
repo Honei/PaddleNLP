@@ -1,5 +1,6 @@
 from leomax_tokenizer.tokenizer_impl import SentencePieceBPELeoMaxTokenizer
 import leomax_tokenizer
+
 class TestModel(leomax_tokenizer.core_tokenizers.models.Model):
     def __init__(self):
         super().__init__()
@@ -15,4 +16,7 @@ if __name__ == '__main__':
     print(model.tokenize("今天天气很不错"))
 
     model = leomax_tokenizer.core_tokenizers.models.BPE()
+    print(model.tokenize("今天天气很不错"))
+
+    model = leomax_tokenizer.core_tokenizers.models.WordPiece()
     print(model.tokenize("今天天气很不错"))

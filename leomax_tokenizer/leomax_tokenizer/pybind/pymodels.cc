@@ -16,7 +16,11 @@ void bind_models(pybind11::module* m) {
 
     py::class_<models::BPE, PyBPE/*辅助类*/>(submodule, "BPE")
         .def(py::init<>())
-        .def("tokenize", &models::BPE::tokenize);;
+        .def("tokenize", &models::BPE::tokenize);
+
+    py::class_<models::WordPiece, PyWordPiece/*辅助类*/>(submodule, "WordPiece")
+        .def(py::init<>())
+        .def("tokenize", &models::WordPiece::tokenize);
 }
 
 } //pybind

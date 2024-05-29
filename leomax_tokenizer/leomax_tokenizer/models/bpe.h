@@ -30,7 +30,6 @@ private:
     void tokenize_with_cache(const std::string& text, std::vector<core::Token>* tokens);
     void word_to_tokens(const core::BPEWord& bpe_word, std::vector<core::Token>* tokens);
     void merge_word(const std::string& word, core::BPEWord* bpe_word);
-    void merge_words(const std::string& word1, core::BPEWord* bpe_word);
 private:
     core::Vocab vocab_;
     core::VocabReversed vocab_reversed_;

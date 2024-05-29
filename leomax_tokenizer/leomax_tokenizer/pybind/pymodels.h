@@ -8,6 +8,7 @@
 #include <pybind11/stl.h>
 #include "../models/models.h"
 #include "../models/bpe.h"
+#include "../models/wordpiece.h"
 
 namespace leomax_tokenizer {
 namespace pybind {
@@ -33,6 +34,18 @@ virtual std::vector<core::Token> tokenize (
         tokenize,
         tokens);
 }
+};
+
+class PyWordPiece : public models::WordPiece {
+public:
+    virtual std::vector<core::Token> tokenize(const std::string& text) override {
+        PYBIND11_OVERRIDE_PURE(
+          std::vector<core::Token>,
+          models::WordPiece,
+          tokenize,
+          text
+          );
+    }
 };
 
 void bind_models(pybind11::module* m);

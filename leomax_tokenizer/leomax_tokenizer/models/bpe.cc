@@ -93,11 +93,11 @@ void BPE::tokenize_with_cache(const std::string& text, std::vector<core::Token>*
     }
 }
 
-void word_to_tokens(const core::BPEWord& bpe_word, std::vector<core::Token>* tokens) {
+void BPE::word_to_tokens(const core::BPEWord& bpe_word, std::vector<core::Token>* tokens) {
 
 }
 
-void merge_words(const std::string& word1, core::BPEWord* bpe_word) {
+void BPE::merge_word(const std::string& word1, core::BPEWord* bpe_word) {
 
 }
 
