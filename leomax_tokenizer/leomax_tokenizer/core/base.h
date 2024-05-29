@@ -13,7 +13,7 @@ using Vocab = std::unordered_map<std::string, uint32_t>;
 using VocabReversed = std::unordered_map<uint32_t, std::string>;
 using Merges = std::vector<std::pair<std::string, std::string>>;
 using Pair = std::pair<uint32_t, uint32_t>;
-using MergeMap = std::unordered_map<Pair, std::pair<uint32_t, uint32_t>>;
+using MergeMap = std::map<Pair, std::pair<uint32_t, uint32_t>>;
 
 
 struct Token {

@@ -4,6 +4,7 @@
 
 #ifndef LEOMAX_TOKENIZER_CACHE_H
 #define LEOMAX_TOKENIZER_CACHE_H
+
 #include <unordered_map>
 
 namespace leomax_tokenizer {

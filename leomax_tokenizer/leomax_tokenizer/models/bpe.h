@@ -16,7 +16,11 @@ public:
     BPE();
     BPE(const core::Vocab& vocab,
         const core::Merges& merges,
+        size_t cache_capacity = core::DEFAULT_CACHE_CAPACITY,
         const std::vector<float>& dropout = {},
+        const std::vector<std::string>& unk_token = {},
+        const std::vector<std::string>& continuing_subword_prefix = {},
+        const std::vector<std::string>& end_of_word_suffix = {},
         bool fuse_unk = false);
 
     virtual std::vector<core::Token> tokenize(const std::string& text) override;
@@ -30,11 +34,14 @@ private:
 private:
     core::Vocab vocab_;
     core::VocabReversed vocab_reversed_;
-//    core::MergeMap merges_;
+    core::MergeMap merges_;
     core::Cache<std::string, core::BPEWord> cache_;
     std::vector<float> dropout_;
+    std::vector<std::string> unk_token_;
+    std::vector<uint32_t> unk_token_id_;
+    std::vector<std::string> continuing_subword_prefix_;
+    std::vector<std::string> end_of_word_suffix_;
     bool fuse_unk_;
-
 
 };
 
