@@ -18,6 +18,14 @@ public:
               const std::string& continuing_subword_prefix = "##",
               bool handle_chinese_chars = true);
     std::vector<core::Token> tokenize(const std::string &text) override;
+private:
+    core::Vocab vocab_;
+    core::VocabReversed vocab_reversed_;
+    size_t max_input_chars_per_word_;
+    std::string continuing_subword_prefix_;
+    bool handle_chinese_chars_;
+    std::string unk_token_;
+    std::string unk_token_id_;
 };
 
 }  // namespace models

@@ -1,7 +1,7 @@
 from abc import ABC
 
 from typing import List
-from .. import C
+from .. import core_tokenizers as C
 class Model(ABC):
     def tokenizer(self, tokens: List[str]):
         return self._model.tokenizer(tokens)
