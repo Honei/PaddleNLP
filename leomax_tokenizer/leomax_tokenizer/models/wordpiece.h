@@ -12,7 +12,7 @@ namespace models {
 class WordPiece : public Model {
 public:
     WordPiece();
-    WordPiece(const core::Vocab &vocab,
+    WordPiece(const core::Vocab& vocab,
               const std::string& unk_token = "[UNK]",
               size_t max_input_chars_per_word = 100,
               const std::string& continuing_subword_prefix = "##",

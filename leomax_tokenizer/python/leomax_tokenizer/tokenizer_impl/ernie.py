@@ -14,7 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..models import WordPiece, FastWordPiece
-class ErnieFastTokenizer:
+from ..c_wrap import Tokenizer
+from .base_tokenizer import BaseFastTokenizer
+
+class ErnieFastTokenizer(BaseFastTokenizer):
     def __init__(self,
                  vocab=None,
                  unk_token="[UNK]",
@@ -31,5 +34,25 @@ class ErnieFastTokenizer:
                  max_input_chars_per_word=100,
                  use_fast_wordpiece=False,
                  use_fast_wordpiece_with_pretokenization=False):
-        # tokenizer_model = FastWordPiece if use_fast_wordpiece else WordPiece
-        pass
+        print("start to construct the ErnieFastTokenizer")
+        tokenizer_model = FastWordPiece if use_fast_wordpiece else WordPiece
+        model_kwargs = {
+            "unk_token": str(unk_token),
+            "continuing_subword_prefix": wordpieces_prefix,
+            "max_input_chars_per_word": max_input_chars_per_word
+        }
+        
+        # 配置 fast wordpiece 的参数
+        if use_fast_wordpiece:
+            model_kwargs["with_pretokenization"] = use_fast_wordpiece_with_pretokenization
+        else:
+            model_kwargs["handle_chinese_chars"] = handle_chinese_chars
+
+        # 如果 vocab 不为空，则使用词表进行初始化
+        if vocab is not None: 
+            tokenizer = Tokenizer(tokenizer_model(vocab=vocab, **model_kwargs))
+        else:
+            tokenizer = Tokenizer(tokenizer_model(**model_kwargs)) 
+            
+        super().__init__(tokenizer, model_kwargs)
+        

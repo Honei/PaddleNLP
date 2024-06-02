@@ -38,6 +38,7 @@ virtual std::vector<core::Token> tokenize (
 
 class PyWordPiece : public models::WordPiece {
 public:
+    using WordPiece::WordPiece;
     virtual std::vector<core::Token> tokenize(const std::string& text) override {
         PYBIND11_OVERRIDE_PURE(
           std::vector<core::Token>,

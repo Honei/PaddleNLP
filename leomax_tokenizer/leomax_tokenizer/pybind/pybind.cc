@@ -3,6 +3,7 @@
 
 #include "pytokens.h"
 #include "pymodels.h"
+#include "pytokenizers.h"
 namespace leomax_tokenizer {
 namespace pybind {
 //namespace py = pybind11;
@@ -16,6 +17,8 @@ PYBIND11_MODULE(core_tokenizers, m) {
     m.def("add", &add, "A function which adds two number");
 
     bind_models(&m);
+
+    bind_tokenizers(&m);
 }
 
 } // namespace pybind

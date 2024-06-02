@@ -1,8 +1,9 @@
+from typing import Dict
 from .base_model import Model
 from .. import core_tokenizers as C
 class WordPiece(Model):
     def __init__(self,
-                 vocab,
+                 vocab: Dict[str, int],
                  unk_token: str = "[UNK]",
                  max_input_chars_per_word: int=100,
                  continuing_subword_prefix: str="##",
@@ -13,8 +14,11 @@ class WordPiece(Model):
                                              unk_token,
                                              max_input_chars_per_word,
                                              continuing_subword_prefix,
-                                             handle_chinese_chars,
                                              handle_chinese_chars)
+    
+    @staticmethod
+    def read_file(vocab):
+        return C.models.WordPiece.read_file(vocab)
 
     @staticmethod
     def from_file(vocab,
