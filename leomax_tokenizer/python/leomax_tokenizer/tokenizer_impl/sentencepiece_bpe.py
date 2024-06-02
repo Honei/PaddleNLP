@@ -1,6 +1,7 @@
 from .base_tokenizer import BaseFastTokenizer
 from ..c_wrap import Tokenizer
 from ..models import BPE
+
 __all__ = ["SentencePieceBPELeoMaxTokenizer"]
 
 class SentencePieceBPELeoMaxTokenizer(BaseFastTokenizer):

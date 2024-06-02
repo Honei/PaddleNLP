@@ -18,6 +18,13 @@ public:
               const std::string& continuing_subword_prefix = "##",
               bool handle_chinese_chars = true);
     std::vector<core::Token> tokenize(const std::string &text) override;
+
+    static core::Vocab get_vocab_from_file(const std::string &vocab_file);
+    static WordPiece get_wordpiece_from_file( 
+        const std::string& vocab_file,
+        const std::string& unk_token="[UNK]",
+        size_t max_input_chars_per_word=100,
+        const std::string& continuing_subword_prefix="##");
 private:
     core::Vocab vocab_;
     core::VocabReversed vocab_reversed_;
@@ -25,7 +32,7 @@ private:
     std::string continuing_subword_prefix_;
     bool handle_chinese_chars_;
     std::string unk_token_;
-    std::string unk_token_id_;
+    uint32_t unk_token_id_;
 };
 
 }  // namespace models
