@@ -2,6 +2,7 @@
 // Created by xiongxinlei on 5/28/24.
 //
 #include "unordered_map"
+#include "map"
 #include <utility>
 #ifndef LEOMAX_TOKENIZER_BASE_H
 #define LEOMAX_TOKENIZER_BASE_H

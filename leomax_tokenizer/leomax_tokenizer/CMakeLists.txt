@@ -6,8 +6,9 @@ if (WITH_PYTHON)
             pybind/pytoken.cc pybind/pymodels.cc models/bpe.cc models/wordpiece.cc
             pybind/pytokenizers.cc tokenizers/tokenizer.cc
             core/added_vocabulary.cc
+            normalizers/normalizer.cc
             pretokenizers/pretokenizer.cc 
-            DEPS pybind)
+            DEPS pybind re2)
 
     # 设置编译出来的库没有 "lib"前缀
     set_target_properties(core_tokenizers PROPERTIES PREFIX "")

@@ -4,7 +4,9 @@
 #include <memory>
 #include <iostream>
 #include "../models/models.h"
+#include "../core/added_vocabulary.h"
 #include "../pretokenizers/pretokenizer.h"
+#include "../normalizers/normalizer.h"
 namespace leomax_tokenizer {
 namespace tokenizers {
 class Tokenizer {
@@ -26,6 +28,8 @@ private:
     void do_tokenize(pretokenizers::PreTokenizedString* pretokenized, const std::string& text);
 private:
     std::shared_ptr<models::Model> model_;
+    std::shared_ptr<normalizers::Normalizer> normalizer_;
+    core::AddedVocabulary added_vocabulary_;
 };
 }   // namespace tokenizers
 }   // namespace leomax_tokenizer

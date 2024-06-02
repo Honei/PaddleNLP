@@ -7,6 +7,8 @@ if (WITH_PYTHON)
     include(cmake/external/pybind11.cmake)
 endif()
 
+include(cmake/external/re2.cmake)
+
 ADD_LIBRARY(python SHARED IMPORTED GLOBAL)
 SET_PROPERTY(TARGET python PROPERTY IMPORTED_LOCATION ${PYTHON_LIBRARIES})
 

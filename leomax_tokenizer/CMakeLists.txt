@@ -26,6 +26,14 @@ set(TOKENIZER_INSTALL_INCLUDE_DIR ${PROJECT_SOURCE_DIR})
 include_directories(${TOKENIZERS_INSTALL_INCLUDE_DIR})
 message(STATUS "tokenizer install include dir ${TOKENIZER_INSTALL_INCLUDE_DIR}")
 
+# if(WIN32) 
+
+# else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") # 后续添加-O3 的优化
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ldl")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpthread")
+# endif()
+
 # 添加预定义的函数以及第三方库需要的一些配置
 # config GIT_URL with github mirrors to speed up dependent repos clone
 option(GIT_URL "Git URL to clone dependent repos" ${GIT_URL})

@@ -10,6 +10,8 @@ void Tokenizer::encode_single_text(const std::string& text) {
 void Tokenizer::encode_text_to_encoding(const std::string& text) {
     std::cout << "Tokenizer::encode_text_to_encoding" << std::endl;
     pretokenizers::PreTokenizedString pretokenized;
+    this->added_vocabulary_.extract_and_normalize(this->normalizer_.get(),
+                                                  text, &pretokenized);
     this->do_tokenize(&pretokenized, text);
 }
 
