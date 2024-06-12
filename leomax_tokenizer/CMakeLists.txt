@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(leomax-tokenizer LANGUAGES CXX C)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
 option(WITH_TESTING "compile leomax-tokenizer with unit testing" OFF)
 option(WITH_PYTHON "compile leomax-tokenizer with python interpreter" ON)
 

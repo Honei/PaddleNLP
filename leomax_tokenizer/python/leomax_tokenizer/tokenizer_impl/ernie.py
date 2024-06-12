@@ -16,6 +16,7 @@
 from ..models import WordPiece, FastWordPiece
 from ..c_wrap import Tokenizer
 from .base_tokenizer import BaseFastTokenizer
+from ..normalizers import BertNormalizer
 
 class ErnieFastTokenizer(BaseFastTokenizer):
     def __init__(self,
@@ -48,11 +49,33 @@ class ErnieFastTokenizer(BaseFastTokenizer):
         else:
             model_kwargs["handle_chinese_chars"] = handle_chinese_chars
 
-        # 如果 vocab 不为空，则使用词表进行初始化
+        # 如果 vocab 不为空，则使用词表进行初始化，实例化一个 tokenizer 对象
         if vocab is not None: 
             tokenizer = Tokenizer(tokenizer_model(vocab=vocab, **model_kwargs))
         else:
             tokenizer = Tokenizer(tokenizer_model(**model_kwargs)) 
+        
+        # 实例化 tokenizer 的时候，词典并没有转换到 tokenizer 内部，需要手动转换
+        if tokenizer.token_to_id(str(unk_token)) is not None:
+            tokenizer.add_special_tokens([str(unk_token)])
+
+        if tokenizer.token_to_id(str(sep_token)) is not None:
+            tokenizer.add_special_tokens([str(sep_token)])
+        
+        if tokenizer.token_to_id(str(cls_token)) is not None:
+            tokenizer.add_special_tokens([str(cls_token)])
             
+        if tokenizer.token_to_id(str(pad_token)) is not None:
+            tokenizer.add_special_tokens([str(pad_token)])
+            
+        if tokenizer.token_to_id(str(mask_token)) is not None:
+            tokenizer.add_special_tokens([str(mask_token)])
+            
+        tokenizer.normalizer = BertNormalizer(
+                clean_text=clean_text,
+                handle_chinese_chars=handle_chinese_chars,
+                strip_accents=strip_accents,
+                lowercase=lowercase,
+            )
         super().__init__(tokenizer, model_kwargs)
         

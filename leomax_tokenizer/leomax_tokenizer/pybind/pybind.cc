@@ -4,6 +4,7 @@
 #include "pytokens.h"
 #include "pymodels.h"
 #include "pytokenizers.h"
+#include "pynormalizer.h"
 namespace leomax_tokenizer {
 namespace pybind {
 //namespace py = pybind11;
@@ -14,7 +15,9 @@ int add(int i, int j) {
 
 PYBIND11_MODULE(core_tokenizers, m) {
     m.doc() = "pybind11 leomax tokenizer core module";
-    m.def("add", &add, "A function which adds two number");
+	m.def("add", &add, "A function which adds two number");
+    
+	bind_normalizers(&m);
 
     bind_models(&m);
 

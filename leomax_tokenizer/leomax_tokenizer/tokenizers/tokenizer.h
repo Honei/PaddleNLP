@@ -17,10 +17,13 @@ public:
 
     template<typename ModelType>
     Tokenizer(const ModelType& model) :
-      model_(std::make_shared<ModelType>(model) /*实例化一个特定类型的分词模型*/){
+      model_(std::make_shared<ModelType>(model) /*实例化一个特定类型的分词模型*/),
+      normalizer_(nullptr) {
         std::cout << "Tokenizer(const ModelType& model)" << std::endl;
     }
-
+    bool token_to_id(const std::string& token,
+                     uint32_t *id) const;
+    size_t add_special_tokens(const std::vector<core::AddedToken>& tokens);
     void encode_single_text(const std::string& text);
 
 private: 

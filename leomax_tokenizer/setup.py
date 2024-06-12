@@ -30,7 +30,8 @@ setup(
     packages=[
         "leomax_tokenizer",
         "leomax_tokenizer.tokenizer_impl",
-        "leomax_tokenizer.models"
+        "leomax_tokenizer.models",
+        "leomax_tokenizer.normalizers"
         ],
     package_data=package_data,
     classifiers=[

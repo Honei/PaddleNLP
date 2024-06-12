@@ -95,5 +95,13 @@ WordPiece WordPiece::get_wordpiece_from_file(
                      continuing_subword_prefix);
 }
 
+bool WordPiece::token_to_id(const std::string& token, uint32_t *id) const {
+    return true;
+}
+
+size_t WordPiece::get_vocab_size() const {
+    return vocab_.size();
+}
+
 }   // namespace models
 }   // namespace leomax_tokenizer

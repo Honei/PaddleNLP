@@ -10,3 +10,10 @@ class Tokenizer:
                text: InputSequence, 
                pair):
         return self._tokenizer.encode(text)
+    
+    def token_to_id(self, token):
+        return self._tokenizer.token_to_id(token)
+    
+    def add_special_tokens(self, tokens):
+        print(f"add special tokens: f{tokens}")
+        self._tokenizer.add_special_tokens(tokens)

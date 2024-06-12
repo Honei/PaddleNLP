@@ -2,11 +2,11 @@ add_subdirectory(models)
 
 if (WITH_PYTHON)
     cc_library(core_tokenizers SHARED 
-        SRCS pybind/pybind.cc
+        SRCS pybind/pybind.cc pybind/utils.cc pybind/pynormalizer.cc
             pybind/pytoken.cc pybind/pymodels.cc models/bpe.cc models/wordpiece.cc
             pybind/pytokenizers.cc tokenizers/tokenizer.cc
             core/added_vocabulary.cc
-            normalizers/normalizer.cc
+            normalizers/normalizer.cc normalizers/bert_normalizer.cc
             pretokenizers/pretokenizer.cc 
             DEPS pybind re2)
 
