@@ -48,6 +48,7 @@ void AddedVocabulary::extract_and_normalize(const normalizers::Normalizer* norma
     pretokenized->split([&](int idx,
                             normalizers::NormalizedString* normalized,
                             std::vector<pretokenizers::StringSplit>* string_splits) {
+                    // 预先进行分词处理
                     this->split_with_indices(*normalized, this->split_trie_, string_splits);         
                 });
 }
@@ -72,15 +73,16 @@ bool AddedVocabulary::find_match(const std::string& text,
               << ", pattern = " << pattern.first->pattern() 
               << std::endl;
     
-    // while (pattern.first->Match(text, start, end, RE2::UNANCHORED, &result_str, 1) 
-    //       && !result_str.empty()) {
-    //     std::cout << "result_str = " << result_str.as_string() 
-    //              << ", " << pattern.first->pattern() << std::endl;
-    //     size_t curr_start = result_str.data() - text.data();
-    //     size_t curr_end = curr_start + result_str.length();
+    while (pattern.first->Match(
+            text, start, end, RE2::UNANCHORED, &result_str, 1) && 
+            !result_str.empty()) {
+        std::cout << "result_str = " << result_str.as_string() 
+                 << ", " << pattern.first->pattern() << std::endl;
+        size_t curr_start = result_str.data() - text.data();
+        size_t curr_end = curr_start + result_str.length();
 
-    //     uint32_t id = pattern.second.at(result_str.ToString());
-    // }
+        uint32_t id = pattern.second.at(result_str.ToString());
+    }
     return true;
 }
 
@@ -88,7 +90,10 @@ bool AddedVocabulary::split_with_indices(const normalizers::NormalizedString& no
                                         const MatchSet& pattern,
                                         std::vector<pretokenizers::StringSplit>* split_results) {
     std::vector<MatchResult> match_results;
-    bool status = find_match(normalized.get_str(), pattern, &match_results);
+    // 根据 pattern 匹配 normalized
+    bool status = find_match(normalized.get_str(), 
+                             pattern, 
+                             &match_results);
     return true;
 }
 

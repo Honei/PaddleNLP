@@ -13,11 +13,11 @@ public:
         return this->normalized_;
     }
 
-    // NormalizedString(NormalizedString&& other);
-    // NormalizedString(NormalizedString& other) = default;
-    // NormalizedString& operator=(NormalizedString&& other);
-    // NormalizedString& operator=(NormalizedString& other) = default;
-    const std::string& get_original() const {
+    NormalizedString(NormalizedString&& other);
+    NormalizedString(NormalizedString& other) = default;
+    NormalizedString& operator=(NormalizedString&& other);
+    NormalizedString& operator=(NormalizedString& other) = default;
+    const std::string& get_original_str() const {
         return this->original_;
     }
 private:

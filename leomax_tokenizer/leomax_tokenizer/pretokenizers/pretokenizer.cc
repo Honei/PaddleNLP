@@ -8,9 +8,22 @@ PreTokenizedString::PreTokenizedString(const std::string& original)
     this->splits_.emplace_back(std::move(StringSplit(original_)));
 }
 
+PreTokenizedString::PreTokenizedString(
+        const normalizers::NormalizedString& normalized) :
+    original_(normalized.get_original_str()) {
+
+}
+
+PreTokenizedString& PreTokenizedString::operator=(PreTokenizedString&& other) {
+  original_ = std::move(other.original_);
+  splits_ = std::move(other.splits_);
+  return *this;
+}
+
 void PreTokenizedString::set_original_str(const std::string& orignal) {
     this->original_ = orignal;
     this->splits_.clear();
+    // 调用右值引用构造方法，重新构建 splits_
     this->splits_.emplace_back(this->original_);
 }
 
