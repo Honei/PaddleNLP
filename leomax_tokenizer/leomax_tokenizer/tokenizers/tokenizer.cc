@@ -2,16 +2,18 @@
 #include <iostream>
 namespace leomax_tokenizer {
 namespace tokenizers {
-void Tokenizer::encode_single_text(const std::string& text) {
-    std::cout << "Tokenizer::encode" << std::endl;
-    this->encode_text_to_encoding(text);
+void Tokenizer::encode_single_text(const std::string& raw_text) {
+    std::cout << "Tokenizer::encode_single_text, raw_text = " << raw_text << std::endl;
+    this->encode_text_to_encoding(raw_text);
 }
 
 void Tokenizer::encode_text_to_encoding(const std::string& text) {
-    std::cout << "Tokenizer::encode_text_to_encoding" << std::endl;
+    std::cout << "Tokenizer::encode_text_to_encoding, text = " << text << std::endl;
     pretokenizers::PreTokenizedString pretokenized;
+    // 调用词典，对原始的文本进行归一化
     this->added_vocabulary_.extract_and_normalize(this->normalizer_.get(),
-                                                  text, &pretokenized);
+                                                  text, 
+                                                  &pretokenized);
     this->do_tokenize(&pretokenized, text);
 }
 

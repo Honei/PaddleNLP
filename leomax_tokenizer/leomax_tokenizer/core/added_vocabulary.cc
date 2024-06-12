@@ -38,8 +38,13 @@ AddedVocabulary::AddedVocabulary() :
 void AddedVocabulary::extract_and_normalize(const normalizers::Normalizer* normalizers,
                                             const std::string& text,
                                             pretokenizers::PreTokenizedString* pretokenized) {
-    std::cout << "AddedVocabulary::extract_and_normalize" << std::endl;
-    pretokenized->set_original_str(text);
+    std::cout << "AddedVocabulary::extract_and_normalize, text = " << text << std::endl;
+    // 构建预处理信息
+    // step1: 设置预处理前的原始字符串
+    pretokenized->set_original_str(text);  
+
+    // step2: 通过预处理对原始字符串进行分词     
+    //        通过lambda表达式传递实际的分词函数
     pretokenized->split([&](int idx,
                             normalizers::NormalizedString* normalized,
                             std::vector<pretokenizers::StringSplit>* string_splits) {

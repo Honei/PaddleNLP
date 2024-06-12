@@ -22,7 +22,7 @@ public:
 
 public:
     normalizers::NormalizedString normalized_;
-    std::vector<core::Token> tokens_;
+    std::vector<core::Token> tokens_;       // 分词结果
 };
 
 class PreTokenizedString {
@@ -36,9 +36,15 @@ public:
                                   std::vector<StringSplit>*)> split_fn);
 
 private:
-    std::string original_;
+    std::string original_;                  // 分词前的原始文本
     std::vector<StringSplit> splits_;
 };
+
+struct PreTokenizer {
+    virtual void operator()(PreTokenizedString* pre_tokenized) const = 0;
+};
+
+
 
 }       // namespace pretokenizers
 }       // namespace leomax_tokenizer

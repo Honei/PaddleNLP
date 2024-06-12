@@ -17,6 +17,7 @@ from ..models import WordPiece, FastWordPiece
 from ..c_wrap import Tokenizer
 from .base_tokenizer import BaseFastTokenizer
 from ..normalizers import BertNormalizer
+from ..pretokenizers import BertPreTokenizer
 
 class ErnieFastTokenizer(BaseFastTokenizer):
     def __init__(self,
@@ -77,5 +78,10 @@ class ErnieFastTokenizer(BaseFastTokenizer):
                 strip_accents=strip_accents,
                 lowercase=lowercase,
             )
+        print(f"use fast word piece :{use_fast_wordpiece}")
+        print(f"use fast word piece pretokernization :{use_fast_wordpiece_with_pretokenization}")
+        if not use_fast_wordpiece or not use_fast_wordpiece_with_pretokenization:
+            tokenizer.pretokenizer = BertPreTokenizer()
+        
         super().__init__(tokenizer, model_kwargs)
         

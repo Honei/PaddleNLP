@@ -12,6 +12,11 @@ public:
     const std::string& get_str() const {
         return this->normalized_;
     }
+
+    // NormalizedString(NormalizedString&& other);
+    // NormalizedString(NormalizedString& other) = default;
+    // NormalizedString& operator=(NormalizedString&& other);
+    // NormalizedString& operator=(NormalizedString& other) = default;
     const std::string& get_original() const {
         return this->original_;
     }

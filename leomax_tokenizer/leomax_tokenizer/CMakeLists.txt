@@ -2,12 +2,12 @@ add_subdirectory(models)
 
 if (WITH_PYTHON)
     cc_library(core_tokenizers SHARED 
-        SRCS pybind/pybind.cc pybind/utils.cc pybind/pynormalizer.cc
+        SRCS pybind/pybind.cc pybind/utils.cc pybind/pynormalizer.cc pybind/pypretokenizers.cc
             pybind/pytoken.cc pybind/pymodels.cc models/bpe.cc models/wordpiece.cc
             pybind/pytokenizers.cc tokenizers/tokenizer.cc
             core/added_vocabulary.cc
             normalizers/normalizer.cc normalizers/bert_normalizer.cc
-            pretokenizers/pretokenizer.cc 
+            pretokenizers/pretokenizer.cc pretokenizers/bert_pretokenizer.cc
             DEPS pybind re2)
 
     # 设置编译出来的库没有 "lib"前缀

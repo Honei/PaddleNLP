@@ -24,7 +24,7 @@ public:
     bool token_to_id(const std::string& token,
                      uint32_t *id) const;
     size_t add_special_tokens(const std::vector<core::AddedToken>& tokens);
-    void encode_single_text(const std::string& text);
+    void encode_single_text(const std::string& raw_text);
 
 private: 
     void encode_text_to_encoding(const std::string& text);
