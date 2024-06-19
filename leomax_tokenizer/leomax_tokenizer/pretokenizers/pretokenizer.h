@@ -72,9 +72,7 @@ public:
         std::function<std::vector<core::Token>(normalizers::NormalizedString*)>
          tokenize_fn);
 
-    StringSplit get_split(int idx) {
-        return this->splits_[idx];
-    }
+    StringSplit get_split(int idx);
 
     size_t get_split_size() const {
         return this->splits_.size();

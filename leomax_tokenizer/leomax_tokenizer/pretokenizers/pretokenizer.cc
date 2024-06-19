@@ -34,9 +34,9 @@ void PreTokenizedString::set_original_str(const std::string& orignal) {
               << std::endl << std::endl;
 }
 
-// StringSplit PreTokenizedString::get_split(int idx) {
-//     return this->splits_[idx];
-// }
+StringSplit PreTokenizedString::get_split(int idx) {
+    return this->splits_[idx];
+}
 
 void PreTokenizedString::split(std::function<void(int idx, 
                                                   normalizers::NormalizedString*,
