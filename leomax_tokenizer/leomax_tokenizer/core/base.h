@@ -9,7 +9,10 @@
 namespace leomax_tokenizer {
 namespace core {
 
+enum OffsetType {CHAR, BYTE};
+
 using Offset = std::pair<uint32_t, uint32_t>;
+using Range = std::pair<uint32_t, uint32_t>;
 using Vocab = std::unordered_map<std::string, uint32_t>;
 using VocabReversed = std::unordered_map<uint32_t, std::string>;
 using Merges = std::vector<std::pair<std::string, std::string>>;

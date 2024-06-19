@@ -1,5 +1,6 @@
 #include "pretokenizer.h"
 
+
 namespace leomax_tokenizer {
 namespace pretokenizers {
 
@@ -14,6 +15,7 @@ PreTokenizedString::PreTokenizedString(
 
 }
 
+
 PreTokenizedString& PreTokenizedString::operator=(PreTokenizedString&& other) {
   original_ = std::move(other.original_);
   splits_ = std::move(other.splits_);
@@ -21,11 +23,20 @@ PreTokenizedString& PreTokenizedString::operator=(PreTokenizedString&& other) {
 }
 
 void PreTokenizedString::set_original_str(const std::string& orignal) {
+    
     this->original_ = orignal;
     this->splits_.clear();
     // 调用右值引用构造方法，重新构建 splits_
     this->splits_.emplace_back(this->original_);
+
+    std::cout << "set original str to:" << this->original_ 
+              << ", the splits size is:" << this->splits_.size() 
+              << std::endl << std::endl;
 }
+
+// StringSplit PreTokenizedString::get_split(int idx) {
+//     return this->splits_[idx];
+// }
 
 void PreTokenizedString::split(std::function<void(int idx, 
                                                   normalizers::NormalizedString*,
@@ -48,6 +59,29 @@ void PreTokenizedString::split(std::function<void(int idx,
 
     this->splits_ = std::move(new_splits);
 }
+
+void PreTokenizedString::tokenize(
+        std::function<std::vector<core::Token>(normalizers::NormalizedString*)>
+         tokenize_fn) {
+    std::cout << "pre tokenized string tokenizing..." << std::endl;
+    std::cout << "this original str is:" << this->original_ 
+             << ", the split size is:" << this->splits_.size() << std::endl;
+    for (auto& split : this->splits_) {
+        // 调用外部的分词器进行分词
+        if (split.tokens_.empty()) {
+            split.tokens_ = std::move(tokenize_fn(&split.normalized_));
+        }
+    }
+}
+
+std::vector<std::tuple<std::string, core::Offset, std::vector<core::Token>>> 
+       PreTokenizedString::get_splits(bool is_original, const core::OffsetType& offset_type) const {
+    std::vector<std::tuple<std::string, core::Offset, std::vector<core::Token>>>
+      result;
+
+    return result;
+}
+
 
 }       // namespace pretokenizers
 

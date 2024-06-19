@@ -20,6 +20,18 @@ public:
                   << normalized_.get_original_str() << std::endl;
     }
 
+    StringSplit(const normalizers::NormalizedString& normalized) :
+            normalized_(normalized) {
+
+    }
+
+    StringSplit(const StringSplit& other) = default;
+    StringSplit(const normalizers::NormalizedString& normalized, 
+                const std::vector<core::Token>& tokens) :
+            normalized_(normalized),
+            tokens_(tokens) {
+    }
+
     // 所有涉及到右值引用的类，都要构建右值引用构造函数与赋值运算符
     StringSplit(StringSplit&& other)
       : tokens_(std::move(other.tokens_)),
@@ -50,11 +62,27 @@ public:
     PreTokenizedString& operator=(PreTokenizedString&& other);
 
     void set_original_str(const std::string& orignal);
+    const std::string& get_original_str() const {
+        return this->original_;
+    }
     void split(std::function<void(int idx, 
                                   normalizers::NormalizedString*,
                                   std::vector<StringSplit>*)> split_fn);
+    void tokenize(
+        std::function<std::vector<core::Token>(normalizers::NormalizedString*)>
+         tokenize_fn);
 
-private:
+    StringSplit get_split(int idx) {
+        return this->splits_[idx];
+    }
+
+    size_t get_split_size() const {
+        return this->splits_.size();
+    }
+    std::vector<std::tuple<std::string, core::Offset, std::vector<core::Token>>> 
+       get_splits(bool is_original, const core::OffsetType& offset_type) const;
+
+public:
     std::string original_;                  // 分词前的原始文本
     std::vector<StringSplit> splits_;
 };

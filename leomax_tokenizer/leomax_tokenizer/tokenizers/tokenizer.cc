@@ -1,4 +1,6 @@
 #include "tokenizer.h"
+#include "../normalizers/bert_normalizer.h"
+#include "../pretokenizers/bert_pretokenizer.h"
 #include <iostream>
 namespace leomax_tokenizer {
 namespace tokenizers {
@@ -14,12 +16,19 @@ void Tokenizer::encode_text_to_encoding(const std::string& text) {
     this->added_vocabulary_.extract_and_normalize(this->normalizer_.get(),
                                                   text, 
                                                   &pretokenized);
+    std::cout << "Tokenizer::encode_text_to_encoding, pretokenized = " 
+                << pretokenized.get_original_str()
+                << ", split size: " << pretokenized.get_split_size() << std::endl;
     this->do_tokenize(&pretokenized, text);
 }
 
 void Tokenizer::do_tokenize(pretokenizers::PreTokenizedString* pretokenized, 
                             const std::string& text) {
     std::cout << "Tokenizer::do_tokenize" << std::endl;
+    // 使用预分词的分词器进行处理
+    pretokenized->tokenize([&](normalizers::NormalizedString* normalized) {
+        return this->get_model_ptr()->tokenize(normalized->get_str());
+    });
 
 }
 
@@ -35,6 +44,8 @@ bool Tokenizer::token_to_id(const std::string& token,
 size_t Tokenizer::add_special_tokens(const std::vector<core::AddedToken>& tokens) {
     return this->added_vocabulary_.add_special_tokens(tokens, *this->model_);
 }
+
+template void Tokenizer::set_pretokenizer(const pretokenizers::BertPreTokenizer& pretokenizer);
 
 }   // namespace tokenizers
 }   // namespace leomax_tokenizer

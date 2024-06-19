@@ -82,6 +82,7 @@ class ErnieFastTokenizer(BaseFastTokenizer):
         print(f"use fast word piece pretokernization :{use_fast_wordpiece_with_pretokenization}")
         if not use_fast_wordpiece or not use_fast_wordpiece_with_pretokenization:
             tokenizer.pretokenizer = BertPreTokenizer()
+            
         
         super().__init__(tokenizer, model_kwargs)
         
