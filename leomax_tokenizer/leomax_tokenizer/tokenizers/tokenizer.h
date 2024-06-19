@@ -7,6 +7,7 @@
 #include "../core/added_vocabulary.h"
 #include "../pretokenizers/pretokenizer.h"
 #include "../normalizers/normalizer.h"
+#include "glog/logging.h"
 namespace leomax_tokenizer {
 namespace tokenizers {
 class Tokenizer {
@@ -22,6 +23,15 @@ public:
       normalizer_(nullptr),
       pretokenizer_(nullptr) {
         std::cout << "Tokenizer(const ModelType& model)" << std::endl;
+    }
+    template<typename NormalizerType> 
+    void set_normalizer(const NormalizerType& normalizer) {
+        VLOG(6) << "set the normalizer type info: " << typeid(normalizer).name();
+        this->normalizer_ = std::make_shared<NormalizerType>(normalizer);
+    }
+
+    normalizers::Normalizer* get_normalizer() {
+        return this->normalizer_.get();
     }
     bool token_to_id(const std::string& token,
                      uint32_t *id) const;

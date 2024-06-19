@@ -2,6 +2,7 @@
 #include "../normalizers/bert_normalizer.h"
 #include "../pretokenizers/bert_pretokenizer.h"
 #include <iostream>
+#include <typeinfo>
 namespace leomax_tokenizer {
 namespace tokenizers {
 void Tokenizer::encode_single_text(const std::string& raw_text) {
@@ -46,6 +47,8 @@ size_t Tokenizer::add_special_tokens(const std::vector<core::AddedToken>& tokens
 }
 
 template void Tokenizer::set_pretokenizer(const pretokenizers::BertPreTokenizer& pretokenizer);
+
+template void Tokenizer::set_normalizer(const normalizers::BertNormalizer&);
 
 }   // namespace tokenizers
 }   // namespace leomax_tokenizer

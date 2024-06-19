@@ -2,6 +2,7 @@
 #include "normalizer.h"
 #include <codecvt>
 #include <locale>
+#include "glog/logging.h"
 #include "../utils/utf8.h"
 namespace leomax_tokenizer {
 namespace normalizers {
@@ -61,11 +62,18 @@ bool NormalizedString::slice(core::Range range, NormalizedString* normalized, bo
     }
 
     uint32_t n_shift = original_range.first;
+    // 限制 original_range.first 不能超过原始长度
     original_range.first =
         (std::min)(original_range.first,
                    static_cast<uint32_t>(this->original_.length() - 1));
+    std::string old_original = normalized->original_;
     normalized->original_ = this->original_.substr(
                     original_range.first, original_range.second - original_range.first);
+    VLOG(6) << "updated the normalized string from: [ " 
+             << old_original << " ] to : [ " 
+             << normalized->original_ << " ]";
+
+    // 重新设置 normalized_range 的first
     normalized_range.first =
         (std::min)(normalized_range.first,
                    static_cast<uint32_t>(this->normalized_.length() - 1));
@@ -73,15 +81,19 @@ bool NormalizedString::slice(core::Range range, NormalizedString* normalized, bo
     normalized->normalized_ = this->normalized_.substr(
                                     normalized_range.first,
                                     normalized_range.second - normalized_range.first);
+    VLOG(6) << "updated the normalized string range second: " << normalized_range.second;
     normalized->alignments_.reserve(normalized_range.second -
                                     normalized_range.first);
+
     for (uint32_t i = normalized_range.first; i < normalized_range.second;
          ++i) {
         normalized->alignments_.emplace_back(
                         this->alignments_[i].first - n_shift,
                         this->alignments_[i].second - n_shift);
     }
+    VLOG(6) << "update the alignments size: " << normalized->alignments_.size();
     normalized->original_shift_ = this->original_shift_ + original_range.first;
+    VLOG(6) << "update the original shift: " << normalized->original_shift_;
     return true;
 
 }
@@ -94,6 +106,7 @@ bool NormalizedString::convert_offsets(core::Range* range,
     std::cout << "len original: " << len_original << std::endl;
     std::cout << "len normalized: " << len_normalized << std::endl;
     std::cout << "range: [ " << range->first << ", " << range->second << " ]" << std::endl;
+    VLOG(6) << "origin range: " << origin_range;
     if (range->first == range->second) {
         return true;
     }
@@ -147,6 +160,8 @@ bool NormalizedString::convert_offsets(core::Range* range,
     std::cout << "convert offsets finished" << std::endl;
     return true;
 }
+
+
 
 }
 }

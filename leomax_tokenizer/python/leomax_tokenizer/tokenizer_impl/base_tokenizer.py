@@ -12,3 +12,12 @@ class BaseFastTokenizer:
             raise ValueError('encode: `text` cannot be None.')
 
         return self._tokenizer.encode(text, pair)
+    
+    @property
+    def normalizer(self):
+        return self._tokenizer.normalizer
+    
+    @normalizer.setter
+    def normalizer(self, normalizer):
+        # 调用 Tokenizer().normalizer = some_normalizer 时，会调用这个 setter
+        self._tokenizer.normalizer = normalizer

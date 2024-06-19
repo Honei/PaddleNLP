@@ -1,4 +1,5 @@
 #include <iostream>
+#include "glog/logging.h"
 #include "added_vocabulary.h"
 #include "../pretokenizers/pretokenizer.h"
 namespace leomax_tokenizer {
@@ -56,6 +57,22 @@ void AddedVocabulary::extract_and_normalize(const normalizers::Normalizer* norma
                     // 预先进行分词处理
                     this->split_with_indices(*normalized, this->split_trie_, string_splits);         
                 });
+
+    pretokenized->split(
+                [&](int idx, 
+                    normalizers::NormalizedString* normalized,  // 预处理之前的数据
+                    std::vector<pretokenizers::StringSplit>* string_splits) {
+                    if(normalizers != nullptr) {
+                        // 预处理, 调用operator() 函数
+                        (*normalizers)(normalized); 
+                        VLOG(6) << "After normalization, normalized str = " << normalized->get_str();
+                        this->split_with_indices(*normalized, 
+                                                this->split_normalized_trie_, 
+                                                string_splits);
+                    } else {
+                        VLOG(6) << "normalizers == nullput !!!!!!!!!!!!";
+                    }
+                } );
 }
 
 bool AddedVocabulary::find_match(const std::string& text,
@@ -115,7 +132,7 @@ bool AddedVocabulary::split_with_indices(const normalizers::NormalizedString& no
         auto offsets = std::get<2>(match_result);
 
         std::cout << "AddedVocabulary::split_with_indices, id = " << id << std::endl;
-        std::cout << "AddedVocabulary::split_with_indices, is_not_unk = " << is_not_unk << std::endl;
+        VLOG(6) << "AddedVocabulary::split_with_indices, is_not_unk = " << is_not_unk;
         normalized.slice(offsets, &slice, false);
         std::vector<core::Token> tokens;
         if (is_not_unk) {
@@ -125,8 +142,8 @@ bool AddedVocabulary::split_with_indices(const normalizers::NormalizedString& no
         split_results->emplace_back(slice, tokens);
     }
 
-    std::cout << "AddedVocabulary::split_with_indices, split_results size = " 
-              << split_results->size() << std::endl;
+    VLOG(6) << "AddedVocabulary::split_with_indices, split_results size = " 
+              << split_results->size();
     return status;
 }
 

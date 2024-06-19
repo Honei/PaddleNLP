@@ -2,6 +2,7 @@
 #include "Python.h"
 #include "../models/wordpiece.h"
 #include "../core/added_vocabulary.h"
+#include "../normalizers/bert_normalizer.h"
 #include "utils.h"
 #include <optional>
 namespace py = pybind11;    // 简化pybind11的命名空间
@@ -9,9 +10,26 @@ namespace py = pybind11;    // 简化pybind11的命名空间
 namespace leomax_tokenizer {
 namespace pybind {
 
+// void set_normalizer_wrapper(tokenizers::Tokenizer& self, 
+//                             py::object *normalizer){
+//     if (py::isinstance<normalizers::BertNormalizer>(*normalizer)) {
+//         self.set_normalizer((*normalizer).cast<normalizers::BertNormalizer>());
+//     }
+// }
+
+// void set_normalizer_wrapper(tokenizers::Tokenizer& self, 
+//                             PyObject* normalizer) {
+//     py::handle py_obj(normalizer);
+//     if (py::type::of(py_obj).is(py::type::of<normalizers::BertNormalizer>())) {
+//         const auto& normalizer = py_obj.cast<const normalizers::BertNormalizer&>();
+//         self.set_normalizer(normalizer);
+//     }
+// }
+
+
 void bind_tokenizers(pybind11::module* m) {
-    // auto submodule = m->def_submodule("tokenizers", "The tokenizers module");
-    py::class_<tokenizers::Tokenizer>(*m, "Tokenizer")
+    auto submodule = m->def_submodule("tokenizers", "The tokenizers module");
+    py::class_<tokenizers::Tokenizer>(*submodule, "Tokenizer")
         .def(py::init<>(), "Create WordPiece tokenizer")
         .def(py::init<const models::WordPiece&>(), "Create WordPiece tokenizer")
         .def("encode", 
@@ -34,7 +52,20 @@ void bind_tokenizers(pybind11::module* m) {
                 added_tokens.push_back(core::AddedToken(token));
             }
             self.add_special_tokens(added_tokens);
-        });
-}
+        })
+        .def_property("normalizer", 
+                        [](const tokenizers::Tokenizer& self) {
+                            Py_RETURN_NONE;
+                        },
+                        [](tokenizers::Tokenizer& self, py::handle normalizers) {
+                            
+                            if (py::isinstance<normalizers::BertNormalizer>(normalizers)) {
+                                    self.set_normalizer((normalizers).cast<normalizers::BertNormalizer>());
+                                }
+                        });
+    } //bind_tokenizers
+
+
+
 }   // namespace pybind
 }   // namespace leomax_tokenizer
