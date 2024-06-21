@@ -16,6 +16,7 @@ public:
 
 private:
     void do_clean_text(NormalizedString *input) const;
+    void do_handle_chinese_chars(NormalizedString *input) const;
 private:
     bool clean_text_;
     bool handle_chinese_chars_;

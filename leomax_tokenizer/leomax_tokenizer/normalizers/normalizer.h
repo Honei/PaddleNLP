@@ -52,6 +52,7 @@ public:
     void update_normalized_range(const OffsetMapping& new_normalized,
                                 uint32_t initial_offset, core::Range range,
                                 bool origin_range);
+    NormalizedString& map_char(std::function<char32_t(char32_t)> map_char_fn);
 public:
     std::string original_;      // 原始字符串
     std::string normalized_;    // 规整之后的字符串

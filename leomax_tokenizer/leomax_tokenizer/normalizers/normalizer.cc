@@ -208,6 +208,24 @@ NormalizedString& NormalizedString::filter_char(std::function<bool(char32_t)> ke
 
 }
 
+NormalizedString& NormalizedString::map_char(std::function<char32_t(char32_t)> map_char_fn) {
+    size_t utf8_len = 0;
+    std::u32string u32normalized;
+    uint32_t curr_char;
+    u32normalized.reserve(normalized_.length());
+    while (utf8_len < normalized_.length()) {
+        auto chwidth =
+            utils::utf8_to_uint32(normalized_.data() + utf8_len, &curr_char);
+        curr_char = utils::utf8_to_unicode(curr_char);
+        curr_char = map_char_fn(curr_char);
+        u32normalized.push_back(curr_char);
+        utf8_len += chwidth;
+    }
+    std::vector<int> changes(u32normalized.size(), 0);
+    update_normalized({u32normalized, changes}, 0);
+    return *this;
+}
+
 void NormalizedString::update_normalized_range(const OffsetMapping& new_normalized,
                             uint32_t initial_offset, core::Range range,
                             bool origin_range) {

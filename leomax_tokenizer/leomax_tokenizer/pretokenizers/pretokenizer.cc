@@ -1,3 +1,4 @@
+#include "glog/logging.h"
 #include "pretokenizer.h"
 
 
@@ -63,9 +64,9 @@ void PreTokenizedString::split(std::function<void(int idx,
 void PreTokenizedString::tokenize(
         std::function<std::vector<core::Token>(normalizers::NormalizedString*)>
          tokenize_fn) {
-    std::cout << "pre tokenized string tokenizing..." << std::endl;
-    std::cout << "this original str is:" << this->original_ 
-             << ", the split size is:" << this->splits_.size() << std::endl;
+    VLOG(6) << "pre tokenized string tokenizing..." << std::endl;
+    VLOG(6) << "this original str is:" << this->original_ 
+             << ", the split size is:" << this->splits_.size();
     for (auto& split : this->splits_) {
         // 调用外部的分词器进行分词
         if (split.tokens_.empty()) {
