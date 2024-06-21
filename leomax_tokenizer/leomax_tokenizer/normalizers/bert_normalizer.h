@@ -13,6 +13,9 @@ public:
                    bool strip_accents = true,
                    bool lowercase = true);
     virtual void operator() (NormalizedString *input) const override;
+
+private:
+    void do_clean_text(NormalizedString *input) const;
 private:
     bool clean_text_;
     bool handle_chinese_chars_;

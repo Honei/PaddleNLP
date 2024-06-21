@@ -25,6 +25,10 @@ set(CPP_PACKAGE_DIR ${CMAKE_BINARY_DIR}/cpp/leomax_tokenizer)
 set(TOKENIZER_CORE_NAME "core_tokenizers")
 
 set(TOKENIZER_CORE_LIBS_PATH "${TOKENIZER_CORE_PATH}/lib${TOKENIZER_CORE_NAME}.so")
+# add_custom_target(copy_shared_library ALL
+#     COMMAND ${CMAKE_COMMAND} -E copy ${TOKENIZER_CORE_LIBS_PATH} ${CPP_PACKAGE_DIR}/lib
+#     DEPENDS build_cpp_package_dir core_tokenizers)
+
 set(TOKENIZER_INSTALL_INCLUDE_DIR ${PROJECT_SOURCE_DIR})
 include_directories(${TOKENIZERS_INSTALL_INCLUDE_DIR})
 message(STATUS "tokenizer install include dir ${TOKENIZER_INSTALL_INCLUDE_DIR}")
@@ -56,3 +60,4 @@ if(WITH_PYTHON)
     # 编译 python 的库
     add_subdirectory(python)
 endif(WITH_PYTHON)
+

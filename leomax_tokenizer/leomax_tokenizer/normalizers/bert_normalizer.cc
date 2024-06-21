@@ -1,4 +1,6 @@
 #include "bert_normalizer.h"
+#include "../utils/unicode_utils.h"
+#include <cstdint>
 
 namespace leomax_tokenizer {
 namespace normalizers {
@@ -15,7 +17,15 @@ BertNormalizer::BertNormalizer(bool clean_text,
 }    
 
 void BertNormalizer::operator() (NormalizedString *input) const {
+    if (this->clean_text_) {
+        do_clean_text(input);
+    }
+}
 
+void BertNormalizer::do_clean_text(NormalizedString *input) const {
+    (*input).filter_char([](char32_t ch) -> bool {
+        return !(ch == 0 || ch == 0xffd || unicode::is_control(ch));
+    });
 }
 
 }

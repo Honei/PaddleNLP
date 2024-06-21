@@ -3,8 +3,15 @@
 #include <string>
 #include <vector>
 #include "../core/base.h"
+#include <algorithm>
+#include <functional>
 namespace leomax_tokenizer {
 namespace normalizers {
+
+struct OffsetMapping {
+    std::u32string u32normalized;
+    std::vector<int> changes;  // Same size as normalized
+};
 
 /*****************************规整之后的字符串********************************/
 class NormalizedString {
@@ -32,6 +39,19 @@ public:
     size_t get_original_len() const {   
         return this->original_.length();
     }
+
+    NormalizedString& filter_char(std::function<bool(char32_t)> keep_char_fn);
+
+    void update_normalized(const OffsetMapping& new_normalized,
+                                        uint32_t initial_offset) {
+        update_normalized_range(new_normalized, initial_offset, 
+                               {0, this->get_len()}, true);
+        
+    }
+
+    void update_normalized_range(const OffsetMapping& new_normalized,
+                                uint32_t initial_offset, core::Range range,
+                                bool origin_range);
 public:
     std::string original_;      // 原始字符串
     std::string normalized_;    // 规整之后的字符串

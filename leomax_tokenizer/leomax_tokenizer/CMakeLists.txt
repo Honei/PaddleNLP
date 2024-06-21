@@ -8,7 +8,7 @@ if (WITH_PYTHON)
             core/added_vocabulary.cc
             normalizers/normalizer.cc normalizers/bert_normalizer.cc
             pretokenizers/pretokenizer.cc pretokenizers/bert_pretokenizer.cc
-            DEPS pybind re2)
+            DEPS pybind re2 icuuc icudata)
 
     # 设置编译出来的库没有 "lib"前缀
     set_target_properties(core_tokenizers PROPERTIES PREFIX "")

@@ -10,6 +10,7 @@ endif()
 include(cmake/external/re2.cmake)
 include(cmake/external/gflags.cmake)    # gflags 一定要放在glog之前
 include(cmake/external/glog.cmake)
+include(cmake/external/icu.cmake)
 ADD_LIBRARY(python SHARED IMPORTED GLOBAL)
 SET_PROPERTY(TARGET python PROPERTY IMPORTED_LOCATION ${PYTHON_LIBRARIES})
 
