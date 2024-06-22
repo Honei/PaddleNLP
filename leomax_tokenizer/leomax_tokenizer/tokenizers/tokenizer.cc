@@ -1,35 +1,44 @@
 #include "tokenizer.h"
 #include "../normalizers/bert_normalizer.h"
 #include "../pretokenizers/bert_pretokenizer.h"
+#include "../core/base.h"
+#include "glog/logging.h"
+#include "../core/encoding.h"
 #include <iostream>
 #include <typeinfo>
 namespace leomax_tokenizer {
 namespace tokenizers {
 void Tokenizer::encode_single_text(const std::string& raw_text) {
-    std::cout << "Tokenizer::encode_single_text, raw_text = " << raw_text << std::endl;
+    VLOG(6) << "Tokenizer::encode_single_text, raw_text = " << raw_text;
     this->encode_text_to_encoding(raw_text);
 }
 
 void Tokenizer::encode_text_to_encoding(const std::string& text) {
-    std::cout << "Tokenizer::encode_text_to_encoding, text = " << text << std::endl;
+    VLOG(6) << "Tokenizer::encode_text_to_encoding, text = " << text;
     pretokenizers::PreTokenizedString pretokenized;
     // 调用词典，对原始的文本进行归一化
     this->added_vocabulary_.extract_and_normalize(this->normalizer_.get(),
                                                   text, 
                                                   &pretokenized);
-    std::cout << "Tokenizer::encode_text_to_encoding, pretokenized = " 
+    VLOG(6) << "Tokenizer::encode_text_to_encoding, pretokenized = " 
                 << pretokenized.get_original_str()
-                << ", split size: " << pretokenized.get_split_size() << std::endl;
+                << ", split size: " << pretokenized.get_split_size();
     this->do_tokenize(&pretokenized, text);
 }
 
 void Tokenizer::do_tokenize(pretokenizers::PreTokenizedString* pretokenized, 
                             const std::string& text) {
-    std::cout << "Tokenizer::do_tokenize" << std::endl;
+    VLOG(6) << "Tokenizer::do_tokenize";
     // 使用预分词的分词器进行处理
     pretokenized->tokenize([&](normalizers::NormalizedString* normalized) {
         return this->get_model_ptr()->tokenize(normalized->get_str());
     });
+
+    std::vector<uint32_t> word_idx;
+    core::OffsetType offset_type;
+    uint32_t type_id;
+    core::Encoding encoding;
+    pretokenized->transform_to_encoding(word_idx, type_id, offset_type, &encoding);
 
 }
 

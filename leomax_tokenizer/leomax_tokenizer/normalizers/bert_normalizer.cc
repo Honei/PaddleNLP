@@ -4,6 +4,7 @@
 #include <codecvt>
 #include <cstring>
 #include <locale>
+#include "glog/logging.h"
 
 namespace leomax_tokenizer {
 namespace normalizers {
@@ -27,6 +28,10 @@ void BertNormalizer::operator() (NormalizedString *input) const {
     if (this->handle_chinese_chars_) {
         do_handle_chinese_chars(input);
     }
+
+    if (this->lowercase_) {
+        input->lower_case();
+    }
 }
 
 void BertNormalizer::do_clean_text(NormalizedString *input) const {
@@ -43,6 +48,7 @@ void BertNormalizer::do_clean_text(NormalizedString *input) const {
 }
 
 void BertNormalizer::do_handle_chinese_chars(NormalizedString *input) const {
+    VLOG(6) << "start to hanlde chinese chars";
     std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
     std::u32string u32input = conv.from_bytes(input->get_str());
     std::u32string u32output;
@@ -50,6 +56,7 @@ void BertNormalizer::do_handle_chinese_chars(NormalizedString *input) const {
     u32output.reserve(u32input.length() * 3);
     changes.reserve(u32input.length() * 3);
     for (int i = 0; i < u32input.length(); ++i) {
+        VLOG(6) << "current index: " << i << ", current char: " << u32input[i];
         if (unicode::is_chinese_char(u32input[i])) {
             u32output.push_back(' ');
             u32output.push_back(u32input[i]);

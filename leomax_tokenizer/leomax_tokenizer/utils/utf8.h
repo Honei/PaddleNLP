@@ -2,9 +2,9 @@
 #define LEOMAX_TOKENIZER_UTILS_UTF8_H_
 #include <string>
 #include <cstdint>
+#include <cstring>
 namespace leomax_tokenizer {
 namespace utils {
-
 
 inline uint32_t unicode_to_utf8(uint32_t unchr) {
     uint32_t utf8 = 0;
@@ -112,6 +112,22 @@ inline void get_utf8_str(const char32_t* unicode_str,
         utf8_str += utf8_char_count;
     }
     *utf8_str = '\0';
+}
+
+inline uint32_t get_unicode_len_from_utf8(const char* psrc, size_t length) {
+    size_t unicode_len = 0;
+    size_t start = 0;
+    while (start < length && psrc[start] != '\0') {
+        size_t chwidth = bytes_in_utf8_char(psrc[start]);
+        start + chwidth;
+        ++unicode_len;
+    } 
+
+    return unicode_len;
+}
+
+inline bool is_char_begin_boundary(char ch) {
+    return ((~ch) >> 7) || ((ch & 0xC0) == 0xC0);
 }
 
 }

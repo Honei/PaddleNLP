@@ -3,10 +3,19 @@
 //
 
 #include <fstream>
+#include "../utils/utf8.h"
 #include "wordpiece.h"
+#include "glog/logging.h"
 
 namespace leomax_tokenizer {
 namespace models {
+
+static bool check_if_string_is_alphanum(const std::string& str) {
+    return std::count_if(str.begin(), str.end(), [](char ch) {
+        // 如果是字母或者数字，返回非零，否则返回0
+        return std::isalnum(ch) > 0;
+    }) == str.length();
+}
 
 const std::string WHITESPACE = " \n\r\t\f\v";
 
@@ -39,9 +48,59 @@ WordPiece::WordPiece(const core::Vocab &vocab,
     unk_token_id_ = vocab_.at(unk_token);
 }
 
+/*****************************************************************************/
+/****************************使用wordpiece进行分词******************************/
+/*****************************************************************************/
 std::vector<core::Token> WordPiece::tokenize(const std::string &text) {
     std::vector<core::Token> tokens;
-    std::cout << "WordPiece tokenize" << std::endl;
+    VLOG(6) << "WordPiece tokenize";
+    std::vector<core::Token> all_tokens;
+    size_t unicode_len = utils::get_unicode_len_from_utf8(text.data(), 
+                                                          text.length());
+    if (unicode_len > this->max_input_chars_per_word_) {
+        // 如果超过了最大的长度，那么直接返回unk
+        all_tokens.emplace_back(this->vocab_.at(this->unk_token_), 
+                               this->unk_token_, core::Offset{0, text.length()});
+    } else {
+        bool found_token = true;
+        uint32_t start = 0;
+
+        while (start < text.length()) {
+            uint32_t end = text.length();
+            core::Token cur_token;
+            bool match_cur_token = false;
+            // 遍历到序列的最后
+            while(start < end) {
+
+                // 获取完整的字符串
+                std::string sub_str = text.substr(start, end - start);
+                
+                // 非首token，则加上前缀，且全部是字母或者数字
+                // 将数字字母切开，加上前缀
+                if (start > 0 && 
+                    (this->handle_chinese_chars_ || check_if_string_is_alphanum(sub_str))) {
+                    sub_str = this->continuing_subword_prefix_ + sub_str;
+                }
+                // 判断是否在vocab中，如果找到，那么将这个词切开，作为一个token处理
+                const auto& vocab_iter = this->vocab_.find(sub_str);
+                if (vocab_iter != this->vocab_.end()) {
+                    VLOG(6) << "WordPiece tokenize, found sub_str: " << sub_str;
+                    cur_token = {vocab_iter->second, sub_str, core::Offset{start, end}};
+                    match_cur_token = true;
+                    break;
+                }
+
+                // 如果没找到待匹配的内容，那么更新end到下一个词的边界
+                for (auto it = sub_str.rbegin(); it != sub_str.rend(); ++it) {
+                    --end;
+                    // 寻找下一个词的边界   
+                    if (utils::is_char_begin_boundary(*it)) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
     return tokens;
 }
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include "../core/encoding.h"
 #include "../core/base.h"
 #include "../normalizers/normalizer.h"
 
@@ -79,6 +80,11 @@ public:
     }
     std::vector<std::tuple<std::string, core::Offset, std::vector<core::Token>>> 
        get_splits(bool is_original, const core::OffsetType& offset_type) const;
+
+    bool transform_to_encoding(const std::vector<uint32_t>& input_word_idx,
+                              uint32_t type_id,
+                              core::OffsetType offset_type,
+                              core::Encoding* encoding) const;
 
 public:
     std::string original_;                  // 分词前的原始文本

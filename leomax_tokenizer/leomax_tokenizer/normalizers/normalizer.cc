@@ -5,6 +5,11 @@
 #include <cstring>
 #include "glog/logging.h"
 #include "../utils/utf8.h"
+#include "unicode/edits.h"
+#include "unicode/errorcode.h"
+#include "unicode/normalizer2.h"
+#include "unicode/uchar.h"
+#include "unicode/utypes.h"
 namespace leomax_tokenizer {
 namespace normalizers {
 NormalizedString::NormalizedString(const std::string& original) :
@@ -334,6 +339,18 @@ void NormalizedString::update_normalized_range(const OffsetMapping& new_normaliz
                         normalized_utf8_size);
     
 } 
+
+NormalizedString& NormalizedString::lower_case() {
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+    std::u32string u32normalized = conv.from_bytes(normalized_);
+    // Can cover all single char covert cases
+    for (int i = 0; i < u32normalized.length(); ++i) {
+        u32normalized[i] = u_tolower(u32normalized[i]);
+    }
+    // No need to update normalized range
+    normalized_ = conv.to_bytes(u32normalized);
+    return *this;
+}
 
 }
 }

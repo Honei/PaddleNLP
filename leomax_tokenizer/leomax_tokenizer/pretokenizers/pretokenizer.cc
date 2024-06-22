@@ -70,6 +70,7 @@ void PreTokenizedString::tokenize(
     for (auto& split : this->splits_) {
         // 调用外部的分词器进行分词
         if (split.tokens_.empty()) {
+            VLOG(6) << "the split's tokens is empty, tokenizing...";
             split.tokens_ = std::move(tokenize_fn(&split.normalized_));
         }
     }
@@ -83,6 +84,28 @@ std::vector<std::tuple<std::string, core::Offset, std::vector<core::Token>>>
     return result;
 }
 
+
+bool PreTokenizedString::transform_to_encoding(const std::vector<uint32_t>& input_word_idx,
+                            uint32_t type_id,
+                            core::OffsetType offset_type,
+                            core::Encoding* encoding) const {
+    if (this->splits_.empty()) {
+        VLOG(6) << "the splits is empty, please check the splits data";
+        *encoding = core::Encoding();
+        return true;
+    }
+    VLOG(6) << "the splits size is:" << this->splits_.size(); 
+
+    for (const auto& split : this->splits_) {
+        if (split.tokens_.empty()) {
+            VLOG(6) << "the split's of PreTokenizedString is empty, "
+                        "please call PreTokenizedString::tokenize first";
+            return false;
+        }
+        VLOG(6) << "the split's tokens size is:" << split.tokens_.size();
+    }
+    return true;
+}
 
 }       // namespace pretokenizers
 
