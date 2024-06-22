@@ -54,6 +54,10 @@ public:
                                 bool origin_range);
     NormalizedString& map_char(std::function<char32_t(char32_t)> map_char_fn);
     NormalizedString& lower_case();
+
+    NormalizedString& NFD();
+
+    void run_normalization(const std::string& mode);
 public:
     std::string original_;      // 原始字符串
     std::string normalized_;    // 规整之后的字符串

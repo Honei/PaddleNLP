@@ -6,7 +6,7 @@ if (WITH_PYTHON)
             pybind/pytoken.cc pybind/pymodels.cc models/bpe.cc models/wordpiece.cc
             pybind/pytokenizers.cc tokenizers/tokenizer.cc
             core/added_vocabulary.cc
-            normalizers/normalizer.cc normalizers/bert_normalizer.cc
+            normalizers/normalizer.cc normalizers/bert_normalizer.cc normalizers/strip_normalizer.cc
             pretokenizers/pretokenizer.cc pretokenizers/bert_pretokenizer.cc
             DEPS pybind re2 icuuc icudata)
 

@@ -18,11 +18,11 @@ if __name__ == '__main__':
     model = TestModel()
     print(model.tokenize("今天天气很不错"))
 
-    model = leomax_tokenizer.core_tokenizers.models.BPE()
-    print(model.tokenize("今天天气很不错"))
+    # model = leomax_tokenizer.core_tokenizers.models.BPE()
+    # print(model.tokenize("今天天气很不错"))
 
-    model = leomax_tokenizer.core_tokenizers.models.WordPiece()
-    print(model.tokenize("今天天气很不错"))
+    # model = leomax_tokenizer.core_tokenizers.models.WordPiece()
+    # print(model.tokenize("今天天气很不错"))
     
     # print(WordPiece.__dict__)
     vocab = WordPiece.read_file("vocab.txt")

@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdint>
 #include <cstring>
+#include "glog/logging.h"
 namespace leomax_tokenizer {
 namespace utils {
 
@@ -115,14 +116,19 @@ inline void get_utf8_str(const char32_t* unicode_str,
 }
 
 inline uint32_t get_unicode_len_from_utf8(const char* psrc, size_t length) {
+    VLOG(6) << "get the unicode data: " << psrc << ", length:" << length;
     size_t unicode_len = 0;
     size_t start = 0;
     while (start < length && psrc[start] != '\0') {
         size_t chwidth = bytes_in_utf8_char(psrc[start]);
-        start + chwidth;
+        start += chwidth;
         ++unicode_len;
+        VLOG(6) << "chwidth: " << chwidth 
+                << ", start: " << start
+                << ", unicode_len: " << unicode_len
+                << ", length: " << length;
     } 
-
+    VLOG(6) << "unicode_len: " << unicode_len;
     return unicode_len;
 }
 

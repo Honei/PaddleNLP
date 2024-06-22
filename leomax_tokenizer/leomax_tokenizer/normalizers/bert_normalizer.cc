@@ -22,11 +22,17 @@ BertNormalizer::BertNormalizer(bool clean_text,
 
 void BertNormalizer::operator() (NormalizedString *input) const {
     if (this->clean_text_) {
+        // 移除不可见符号
         do_clean_text(input);
     }
 
     if (this->handle_chinese_chars_) {
+        // 将中文符号前后添加空格
         do_handle_chinese_chars(input);
+    }
+
+    if (this->strip_accents_) {
+        
     }
 
     if (this->lowercase_) {
@@ -38,7 +44,7 @@ void BertNormalizer::do_clean_text(NormalizedString *input) const {
     (*input).filter_char([](char32_t ch) -> bool {
         return !(ch == 0 || ch == 0xffd || unicode::is_control(ch));
     })
-    .map_char([](char32_t ch) -> char32_t {
+    .map_char([](char32_t ch) -> char32_t { // 将不可见符号转换为空格
         if (unicode::is_whitespace(ch)) {
             return ' ';
         }

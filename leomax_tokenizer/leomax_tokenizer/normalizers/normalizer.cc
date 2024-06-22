@@ -352,5 +352,15 @@ NormalizedString& NormalizedString::lower_case() {
     return *this;
 }
 
+
+NormalizedString& NormalizedString::NFD() {
+    run_normalization("NFD");
+    return *this;
+}
+
+void NormalizedString::run_normalization(const std::string& mode) {
+    
+}
+
 }
 }

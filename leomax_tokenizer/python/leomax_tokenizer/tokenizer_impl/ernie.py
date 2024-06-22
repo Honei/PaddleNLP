@@ -51,9 +51,12 @@ class ErnieFastTokenizer(BaseFastTokenizer):
             model_kwargs["handle_chinese_chars"] = handle_chinese_chars
 
         # 如果 vocab 不为空，则使用词表进行初始化，实例化一个 tokenizer 对象
+    
         if vocab is not None: 
+            print("vocab is not None")
             tokenizer = Tokenizer(tokenizer_model(vocab=vocab, **model_kwargs))
         else:
+            print("vocab is None")
             tokenizer = Tokenizer(tokenizer_model(**model_kwargs)) 
         
         # 实例化 tokenizer 的时候，词典并没有转换到 tokenizer 内部，需要手动转换

@@ -25,6 +25,7 @@ WordPiece::WordPiece() :
     max_input_chars_per_word_(100),
     unk_token_id_(0),
     handle_chinese_chars_(true) {
+    VLOG(6) << "WordPiece default constructor";
 
 }
 
@@ -38,11 +39,12 @@ WordPiece::WordPiece(const core::Vocab &vocab,
        max_input_chars_per_word_(max_input_chars_per_word),
        continuing_subword_prefix_(continuing_subword_prefix),
        handle_chinese_chars_(handle_chinese_chars) {
-    std::cout << "WordPiece constructor" << std::endl;
+    VLOG(6) << "WordPiece constructor";
     for (const auto& item : vocab) {
         vocab_reversed_[item.second] = item.first;
     }
-
+    
+    VLOG(6) << "WordPiece vocab size: " << this->vocab_.size();
     // 计算得到 unk 的id，可能找不到，没有抛出异常
     // NOTE: todo: 考虑抛出异常，如果没有 unk_token，则抛出异常
     unk_token_id_ = vocab_.at(unk_token);
@@ -52,11 +54,12 @@ WordPiece::WordPiece(const core::Vocab &vocab,
 /****************************使用wordpiece进行分词******************************/
 /*****************************************************************************/
 std::vector<core::Token> WordPiece::tokenize(const std::string &text) {
-    std::vector<core::Token> tokens;
     VLOG(6) << "WordPiece tokenize";
     std::vector<core::Token> all_tokens;
     size_t unicode_len = utils::get_unicode_len_from_utf8(text.data(), 
                                                           text.length());
+
+    VLOG(6) << "WordPiece tokenize, unicode_len: " << unicode_len;
     if (unicode_len > this->max_input_chars_per_word_) {
         // 如果超过了最大的长度，那么直接返回unk
         all_tokens.emplace_back(this->vocab_.at(this->unk_token_), 
@@ -71,10 +74,11 @@ std::vector<core::Token> WordPiece::tokenize(const std::string &text) {
             bool match_cur_token = false;
             // 遍历到序列的最后
             while(start < end) {
-
                 // 获取完整的字符串
                 std::string sub_str = text.substr(start, end - start);
-                
+                VLOG(6) << "WordPiece tokenize, start: "
+                        << start << ", end: " << end 
+                        << ", sub_str: [" << sub_str << "]";
                 // 非首token，则加上前缀，且全部是字母或者数字
                 // 将数字字母切开，加上前缀
                 if (start > 0 && 
@@ -99,9 +103,29 @@ std::vector<core::Token> WordPiece::tokenize(const std::string &text) {
                     }
                 }
             }
+
+            if (!match_cur_token) {
+                VLOG(6) << "word not find any matching token";
+                found_token = false;
+                break;
+            }
+
+            VLOG(6) << "cur token is: " << cur_token.value_;
+            all_tokens.emplace_back(cur_token);
+        }
+
+        if (!found_token) {
+            all_tokens.clear();
+            VLOG(6) << "vocab size: " << this->vocab_.size() 
+                    << ", unk_token: " << this->unk_token_;
+            all_tokens.emplace_back(this->vocab_.at(this->unk_token_),
+                                   this->unk_token_, 
+                                   core::Offset{0, text.length()});
         }
     }
-    return tokens;
+
+
+    return all_tokens;
 }
 
 core::Vocab WordPiece::get_vocab_from_file(const std::string &vocab_file) {
