@@ -39,15 +39,15 @@ AddedVocabulary::AddedVocabulary() :
 void AddedVocabulary::extract_and_normalize(const normalizers::Normalizer* normalizers,
                                             const std::string& text,
                                             pretokenizers::PreTokenizedString* pretokenized) {
-    std::cout << "AddedVocabulary::extract_and_normalize, text = " << text << std::endl;
+    VLOG(6) << "AddedVocabulary::extract_and_normalize, text = " << text;
     // 构建预处理信息
     // step1: 设置预处理前的原始字符串
     pretokenized->set_original_str(text);  
 
-    std::cout << "extract and normalize, pretokenized split size: " 
-                << pretokenized->get_split_size() << std::endl;
-    std::cout << "splits[0].normalized.alignments size: " 
-              << pretokenized->get_split(0).normalized_.alignments_.size() << std::endl;
+    VLOG(6) << "extract and normalize, pretokenized split size: " 
+                << pretokenized->get_split_size();
+    VLOG(6) << "splits[0].normalized.alignments size: " 
+              << pretokenized->get_split(0).normalized_.alignments_.size();
 
     // step2: 通过预处理对原始字符串进行分词     
     //        通过lambda表达式传递实际的分词函数

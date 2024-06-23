@@ -4,7 +4,7 @@
 #include <vector>
 #include "../core/base.h"
 #include <algorithm>
-#include <functional>
+#include "re2/re2.h"
 namespace leomax_tokenizer {
 namespace normalizers {
 
@@ -56,8 +56,12 @@ public:
     NormalizedString& lower_case();
 
     NormalizedString& NFD();
+    NormalizedString& NFKC();
 
     void run_normalization(const std::string& mode);
+
+    NormalizedString& replace(const re2::RE2& pattern,
+                              const std::string& content);
 public:
     std::string original_;      // 原始字符串
     std::string normalized_;    // 规整之后的字符串

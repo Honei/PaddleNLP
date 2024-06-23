@@ -12,8 +12,12 @@ public:
     virtual void operator()(PreTokenizedString* pretokenized) const override;
 
 private:
+    void update_replacement_char();
+
+private:
     std::string replacement_;
     bool add_prefix_space_;
+    char32_t replacement_char_;
 };
 
 }

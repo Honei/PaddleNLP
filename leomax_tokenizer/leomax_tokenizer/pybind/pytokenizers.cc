@@ -4,6 +4,7 @@
 #include "../models/bpe.h"
 #include "../core/added_vocabulary.h"
 #include "../normalizers/bert_normalizer.h"
+#include "../normalizers/unicode_normalizer.h"
 #include "utils.h"
 #include <optional>
 namespace py = pybind11;    // 简化pybind11的命名空间
@@ -62,8 +63,10 @@ void bind_tokenizers(pybind11::module* m) {
                         [](tokenizers::Tokenizer& self, py::handle normalizers) {
                             
                             if (py::isinstance<normalizers::BertNormalizer>(normalizers)) {
-                                    self.set_normalizer((normalizers).cast<normalizers::BertNormalizer>());
-                                }
+                                self.set_normalizer((normalizers).cast<normalizers::BertNormalizer>());
+                            } else if (py::isinstance<normalizers::NFKCNormalizer>(normalizers)) {
+                                self.set_normalizer((normalizers).cast<normalizers::NFKCNormalizer>());
+                            }
                         });
     } //bind_tokenizers
 

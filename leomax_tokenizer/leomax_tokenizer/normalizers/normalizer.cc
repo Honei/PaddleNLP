@@ -340,6 +340,7 @@ void NormalizedString::update_normalized_range(const OffsetMapping& new_normaliz
     
 } 
 
+
 NormalizedString& NormalizedString::lower_case() {
     std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
     std::u32string u32normalized = conv.from_bytes(normalized_);
@@ -359,7 +360,61 @@ NormalizedString& NormalizedString::NFD() {
 }
 
 void NormalizedString::run_normalization(const std::string& mode) {
-    
+    icu::ErrorCode icu_error;
+    const icu::Normalizer2* normalizer = nullptr;
+    if ("NFKC" == mode) {
+        normalizer = icu::Normalizer2::getNFKCInstance(icu_error);
+    }
+
+    std::string normalized_result;
+    icu::Edits edits;
+    icu::StringByteSink<std::string> byte_sink(&normalized_result);
+    normalizer->normalizeUTF8(
+        0,
+        icu::StringPiece(normalized_.data(), normalized_.length()),
+        byte_sink,
+        &edits,
+        icu_error);
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+    std::u32string u32new_normalized = conv.from_bytes(normalized_result);
+
+    // Set changes
+    std::vector<int> changes;
+    changes.reserve(u32new_normalized.length());
+    auto iter = edits.getFineIterator();
+    int old_offset = 0;
+    int new_offset = 0;
+
+    // The edits record the byte level modification, so need to transform to char
+    // level
+    // using GetUnicodeLenFromUTF8
+    while (iter.next(icu_error)) {
+        auto old_length = iter.oldLength();
+        auto new_length = iter.newLength();
+        auto new_unicode_len = utils::get_unicode_len_from_utf8(
+            normalized_result.data() + new_offset, new_length);
+        auto old_unicode_len = utils::get_unicode_len_from_utf8(
+            normalized_.data() + old_offset, old_length);
+        old_offset += old_length;
+        new_offset += new_length;
+        if (old_unicode_len == new_unicode_len) {
+            // Just replace the char
+            changes.insert(changes.end(), old_unicode_len, 0);
+        } else if (old_unicode_len < new_unicode_len) {
+            // Insert the char
+            changes.insert(changes.end(), old_unicode_len, 0);
+            changes.insert(changes.end(), new_unicode_len - old_unicode_len, 1);
+        } else /* old_length > new_length */ {
+            // Remove the char
+            if (new_unicode_len > 1) {
+                changes.insert(changes.end(), new_unicode_len - 1, 0);
+            }
+            changes.push_back(new_unicode_len - old_unicode_len);
+        }
+    }
+    OffsetMapping new_normalized_offset{u32new_normalized, changes};
+    // Update normalized_ and alignments_
+    update_normalized(new_normalized_offset, 0);    
 }
 
 void NFKDNormalizer::operator()(NormalizedString* input) const {
@@ -380,6 +435,60 @@ void NFKDNormalizer::operator()(NormalizedString* input) const {
     }
     return ch;
   });
+}
+
+ NormalizedString& NormalizedString::NFKC() {
+    run_normalization("NFKC");
+    return *this;
+ }
+
+
+NormalizedString& NormalizedString::replace(const re2::RE2& pattern,
+                                            const std::string& content) {
+    re2::StringPiece result;
+    size_t start = 0;
+    size_t end = normalized_.length();
+    int64_t offset = 0;
+
+    std::u32string u32content;
+    u32content.reserve(content.size());
+    std::vector<int> changes;
+    changes.reserve(content.size());
+
+    size_t content_utf8_len = 0;
+    while (content_utf8_len < content.length()) {
+        uint32_t content_char;
+        auto content_char_width =
+            utils::utf8_to_uint32 (content.data() + content_utf8_len, &content_char);
+        content_char = utils::utf8_to_unicode(content_char);
+        u32content.push_back(content_char);
+        changes.push_back(1);
+        content_utf8_len += content_char_width;
+    }
+    size_t new_len = content.length();
+
+    OffsetMapping new_normalized{u32content, changes};
+
+    while (pattern.Match(normalized_, start, end, RE2::UNANCHORED, &result, 1)) {
+        size_t curr_start = result.data() - normalized_.data();
+        size_t old_len = result.length();
+        size_t curr_end = curr_start + old_len;
+        size_t removed_chars =
+            utils::get_unicode_len_from_utf8(normalized_.data() + curr_start, old_len);
+        update_normalized_range(
+            new_normalized, removed_chars, {curr_start, curr_end}, false);
+        offset = new_len - old_len;
+        // update start
+        start = curr_end;
+        if (offset >= 0) {
+            start = curr_end + offset;
+        } else {
+            size_t uoffset = -offset;
+            start = (curr_end >= uoffset) ? curr_end - uoffset : 0;
+        }
+        end = normalized_.length();
+    }
+    return *this;
 }
 
 }

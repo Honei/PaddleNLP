@@ -24,15 +24,15 @@ PreTokenizedString& PreTokenizedString::operator=(PreTokenizedString&& other) {
 }
 
 void PreTokenizedString::set_original_str(const std::string& orignal) {
-    
+    VLOG(6) << "set original str to:" << orignal;
     this->original_ = orignal;
     this->splits_.clear();
     // 调用右值引用构造方法，重新构建 splits_
     this->splits_.emplace_back(this->original_);
-
-    std::cout << "set original str to:" << this->original_ 
-              << ", the splits size is:" << this->splits_.size() 
-              << std::endl << std::endl;
+    VLOG(6) << "==================================================================";
+    VLOG(6) << "set original str to:" << this->original_ 
+              << ", the splits size is:" << this->splits_.size();
+    VLOG(6) << "==================================================================";
 }
 
 StringSplit PreTokenizedString::get_split(int idx) {
