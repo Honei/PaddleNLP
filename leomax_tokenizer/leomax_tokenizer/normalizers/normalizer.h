@@ -69,6 +69,11 @@ struct Normalizer {
     virtual void operator()(NormalizedString* mut_str) const = 0;
 };
 
+class NFKDNormalizer : public Normalizer {
+public: 
+    virtual void operator()(NormalizedString* input) const override;
+};
+
 }       // namespace normalizers
 }       // namespace leomax_tokenizer
 #endif

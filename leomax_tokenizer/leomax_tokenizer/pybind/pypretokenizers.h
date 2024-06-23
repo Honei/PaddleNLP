@@ -5,6 +5,7 @@
 #include <pybind11/stl.h>
 #include "../pretokenizers/pretokenizer.h"
 #include "../pretokenizers/bert_pretokenizer.h"
+#include "../pretokenizers/metaspace.h"
 namespace leomax_tokenizer {
 namespace pybind {
 
@@ -37,6 +38,24 @@ public:
             );
     }
 
+};
+
+
+class PyMetaSpacePreTokenizer : public pretokenizers::MetaSpacePreTokenizer {
+public:
+    // 使用默认构造函数
+    using pretokenizers::MetaSpacePreTokenizer::MetaSpacePreTokenizer;
+
+    virtual void operator() (
+        pretokenizers::PreTokenizedString* pretokenized) const override {
+        PYBIND11_OVERLOAD_NAME (
+            void,
+            MetaSpacePreTokenizer,
+            "__call__",
+            operator(),
+            pretokenized
+        );
+    }
 };
 
 void bind_pretokenizers(pybind11::module *m);

@@ -3,16 +3,7 @@ from .. import core_tokenizers as C
 from .wordpiece import WordPiece
 from .base_model import Model
 from .wordpiece import WordPiece
-
-class BPE(Model):
-    def __init__(self,
-               vocab=None,
-               merges=None,
-               dropout=None,
-               unk_token=None,
-               fuse_unk=None):
-        pass
-
+from .bpe import BPE
 class FastWordPiece(Model):
     def __init__(self,
                  vocab,

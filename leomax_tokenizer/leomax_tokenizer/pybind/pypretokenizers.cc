@@ -14,6 +14,12 @@ void bind_pretokenizers(pybind11::module *m) {
     py::class_<pretokenizers::BertPreTokenizer, PyBertPreTokenizer>(submodule, "BertPreTokenizer")
         .def(py::init<>())
         .def("__call__", &pretokenizers::BertPreTokenizer::operator());
+
+    py::class_<pretokenizers::MetaSpacePreTokenizer, PyMetaSpacePreTokenizer>(submodule, "MetaSpacePreTokenizer")
+        .def(py::init<const std::string&, bool>(),
+            py::arg("replacement") = "_",
+            py::arg("add_prefix_space") = true)
+        .def("__call__", &pretokenizers::MetaSpacePreTokenizer::operator());
 }
 
 }

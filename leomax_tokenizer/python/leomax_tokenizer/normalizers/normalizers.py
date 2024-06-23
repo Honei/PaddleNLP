@@ -15,3 +15,8 @@ class BertNormalizer:
                                                        handle_chinese_chars,
                                                        strip_accents,
                                                        lowercase)
+        
+class NFKCNormalizer(Normalizer):
+    def __init__(self):
+        super().__init__()
+        self._normalizer = C.normalizers.NFKCNormalizer()

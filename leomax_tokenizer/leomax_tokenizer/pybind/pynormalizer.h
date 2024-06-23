@@ -5,6 +5,7 @@
 #include <pybind11/stl.h>
 #include "../normalizers/normalizer.h"
 #include "../normalizers/bert_normalizer.h"
+#include "../normalizers/unicode_normalizer.h"
 
 namespace leomax_tokenizer {
 namespace pybind {
@@ -30,6 +31,38 @@ public:
 		PYBIND11_OVERLOAD_NAME(
 			void, normalizers::BertNormalizer, "__call__", operator(), mut_str);
 	}
+};
+
+
+class PyNFKDNormalizer : public normalizers::NFKDNormalizer {
+public:
+    using NFKDNormalizer::NFKDNormalizer;
+    virtual void operator()(
+        normalizers::NormalizedString* mut_str) const override {
+        PYBIND11_OVERLOAD_NAME(
+            void,
+            NFKDNormalizer,
+            "__call__",
+            operator(),
+            mut_str
+        );
+    }
+
+};
+
+class PyNFKCNormalizer : public normalizers::NFKCNormalizer {
+public:
+    using NFKCNormalizer::NFKCNormalizer;
+    virtual void operator()(
+        normalizers::NormalizedString* mut_str) const override {
+        PYBIND11_OVERLOAD_NAME(
+            void,
+            NFKCNormalizer,
+            "__call__",
+            operator(),
+            mut_str
+        );
+    }
 };
 
 void bind_normalizers(pybind11::module *m);

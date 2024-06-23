@@ -12,7 +12,7 @@ void bind_normalizers(pybind11::module *m) {
         .def("__call__", 
             &normalizers::Normalizer::operator());
 
-
+    
 	py::class_<normalizers::BertNormalizer, PyBertNormalizer>(submodule,
 																"BertNormalizer")
 		.def(py::init<bool, bool, bool, bool>(),
@@ -36,6 +36,14 @@ void bind_normalizers(pybind11::module *m) {
              py::arg("lowercase") = true)
         .def("__call__",
              &normalizers::BertNormalizer::operator());
+
+    py::class_<normalizers::NFKDNormalizer, PyNFKDNormalizer>(submodule, "NFKDNormalizer")
+        .def(py::init<>())
+        .def("__call__", &normalizers::NFKDNormalizer::operator());
+
+    py::class_<normalizers::NFKCNormalizer, PyNFKCNormalizer>(submodule, "NFKCNormalizer") 
+        .def(py::init<>())
+        .def("__call__", &normalizers::NFKCNormalizer::operator());
 }
 
 } // namespace name

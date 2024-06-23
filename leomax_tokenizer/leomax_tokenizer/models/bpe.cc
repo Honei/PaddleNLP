@@ -3,9 +3,14 @@
 //
 #include "bpe.h"
 #include <iostream>
+#include <fstream>
 #include <sstream>
+#include "nlohmann/json.hpp"
+#include "glog/logging.h"
 namespace leomax_tokenizer {
 namespace models {
+
+const std::string WHITESPACE = " \n\r\t\f\v";
 
 BPE::BPE() :
     fuse_unk_(false) {
@@ -117,5 +122,59 @@ std::vector<core::Token> BPE::tokenize(const std::string& text) {
 
     return tokens;
 }
+
+void BPE::get_vocab_and_merges_from_file(const std::string& vocab_json_path,
+                                const std::string& merge_path,
+                                core::Vocab* vocab,
+                                core::Merges* merges) {
+    *vocab = BPE::get_vocab_from_file(vocab_json_path);
+    *merges = BPE::get_merges_from_file(merge_path);
+}
+
+core::Vocab BPE::get_vocab_from_file(const std::string& vocab_json_path) {
+    std::ifstream fin(vocab_json_path);
+    core::Vocab vocab;
+    nlohmann::json vocab_json;
+    fin >> vocab_json;
+    for (auto it = vocab_json.begin(); it != vocab_json.end(); ++it) {
+        vocab[it.key()] = it.value();
+    }
+
+    VLOG(6) << "vocab size: " << vocab.size();
+    return vocab;
+
+}
+core::Merges BPE::get_merges_from_file(const std::string& merge_path) {
+    core::Merges merges;
+    std::ifstream fin(merge_path);
+    std::string word_str;
+    while (std::getline(fin, word_str)) {
+        // 句首，表示该merges.txt 由哪一个版本的tokenizer生成
+        if (word_str.find("#version") == 0) {
+            continue;
+        }
+
+        std::pair<std::string, std::string> result;
+        construct_merges_pair(word_str, &result);
+        merges.emplace_back(result);
+    }
+
+    return merges;
+}
+
+void BPE::construct_merges_pair(const std::string& word_line,
+                                std::pair<std::string, std::string>* pair_result) {
+    // 找到第一个词的开始和结束位置
+    auto pair_a_begin = word_line.find_first_not_of(WHITESPACE); 
+    auto pair_a_end = word_line.find_first_of(WHITESPACE, pair_a_begin); 
+
+    // 找到第二个词的开始和结束位置
+    auto pair_b_begin = word_line.find_first_not_of(WHITESPACE, pair_a_end);
+    auto pair_b_end = word_line.find_first_of(WHITESPACE, pair_b_begin);
+    *pair_result = {word_line.substr(pair_a_begin, pair_a_end - pair_a_begin),
+               word_line.substr(pair_b_begin, pair_b_end - pair_b_begin)};
+
+}
+
 }  // namespace models
 }  // namespace leomax_tokenizer

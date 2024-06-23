@@ -1,6 +1,7 @@
 #include "pytokenizers.h"
 #include "Python.h"
 #include "../models/wordpiece.h"
+#include "../models/bpe.h"
 #include "../core/added_vocabulary.h"
 #include "../normalizers/bert_normalizer.h"
 #include "utils.h"
@@ -30,8 +31,9 @@ namespace pybind {
 void bind_tokenizers(pybind11::module* m) {
     auto submodule = m->def_submodule("tokenizers", "The tokenizers module");
     py::class_<tokenizers::Tokenizer>(*submodule, "Tokenizer")
-        .def(py::init<>(), "Create WordPiece tokenizer")
+        .def(py::init<>(), "Create tokenizer")
         .def(py::init<const models::WordPiece&>(), "Create WordPiece tokenizer")
+        .def(py::init<const models::BPE&>(), "Create BPE tokenizer")
         .def("encode", 
              &tokenizers::Tokenizer::encode_single_text,
              py::arg("text"))

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <iostream>
+#include "glog/logging.h"
 #include "../models/models.h"
 #include "../core/added_vocabulary.h"
 #include "../pretokenizers/pretokenizer.h"
@@ -22,7 +23,8 @@ public:
       model_(std::make_shared<ModelType>(model) /*实例化一个特定类型的分词模型*/),
       normalizer_(nullptr),
       pretokenizer_(nullptr) {
-        std::cout << "Tokenizer(const ModelType& model)" << std::endl;
+        VLOG(6) << "Tokenizer(const ModelType& model), model type is: "
+                << typeid(model).name();
     }
     template<typename NormalizerType> 
     void set_normalizer(const NormalizerType& normalizer) {

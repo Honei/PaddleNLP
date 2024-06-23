@@ -24,6 +24,14 @@ public:
         bool fuse_unk = false);
 
     virtual std::vector<core::Token> tokenize(const std::string& text) override;
+    static void get_vocab_and_merges_from_file(const std::string& vocab_json_path,
+                                        const std::string& merge_path,
+                                        core::Vocab* vocab,
+                                        core::Merges* merges);
+    static core::Vocab get_vocab_from_file(const std::string& vocab_json_path);
+    static core::Merges get_merges_from_file(const std::string& merge_path);
+    static void construct_merges_pair(const std::string& word_line,
+                               std::pair<std::string, std::string>* pair);
 
 private:
     void init(const core::Merges& merges);

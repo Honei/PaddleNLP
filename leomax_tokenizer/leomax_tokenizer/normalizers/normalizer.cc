@@ -362,5 +362,25 @@ void NormalizedString::run_normalization(const std::string& mode) {
     
 }
 
+void NFKDNormalizer::operator()(NormalizedString* input) const {
+  input->filter_char([](char32_t ch) -> bool {
+    if ((ch >= 0x0001 && ch <= 0x0008) || (ch == 0x000B) ||
+        (ch >= 0x000E && ch <= 0x001F) || (ch == 0x007F) || (ch == 0x008F) ||
+        (ch == 0x009F)) {
+      return false;
+    }
+    return true;
+  });
+
+  input->map_char([](char32_t ch) -> char32_t {
+    if ((ch == 0x0009) || (ch == 0x000A) || (ch == 0x000C) || (ch == 0x000D) ||
+        (ch == 0x1680) || (ch >= 0x200B && ch <= 0x200F) || (ch == 0x2028) ||
+        (ch == 0x2029) || (ch == 0x2581) || (ch == 0xFEFF) || (ch == 0xFFFD)) {
+      return ' ';
+    }
+    return ch;
+  });
+}
+
 }
 }
