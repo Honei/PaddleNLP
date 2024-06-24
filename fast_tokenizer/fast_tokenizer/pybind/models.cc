@@ -221,6 +221,7 @@ void BindModels(pybind11::module* m) {
       .def("get_vocab", &models::Model::GetVocab)
       .def("get_vocab_size", &models::Model::GetVocabSize)
       .def("save", &models::Model::Save);
+      
   py::class_<models::WordPiece, PyWordPiece>(submodule, "WordPiece")
       .def(py::init<>())
       .def(py::init<const core::Vocab&,
@@ -319,6 +320,7 @@ void BindModels(pybind11::module* m) {
           },
           py::arg("folder"),
           py::arg("prefix") = py::none());
+
   py::class_<models::BPE, PyBPE>(submodule, "BPE")
       .def(py::init([](const py::object& py_vocab,
                        const py::object& py_merges,

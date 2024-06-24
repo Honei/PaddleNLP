@@ -30,6 +30,7 @@ const std::string WHITESPACE = " \n\r\t\f\v";
 
 void BPE::Init(const core::Merges& merges) {
   if (dropout_.size() > 0) {
+
     if (dropout_[0] > 1.0 || dropout_[0] <= 0.0) {
       std::ostringstream oss;
       oss << "The range of dropout rate should be (0,1], but receive "

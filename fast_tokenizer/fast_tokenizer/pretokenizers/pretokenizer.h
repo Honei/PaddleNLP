@@ -32,6 +32,7 @@ namespace pretokenizers {
 struct FASTTOKENIZER_DECL StringSplit {
   normalizers::NormalizedString normalized_;
   std::vector<core::Token> tokens_;
+
   StringSplit(normalizers::NormalizedString&& normalized)
       : normalized_(std::move(normalized)) {}
   StringSplit(const normalizers::NormalizedString& normalized)

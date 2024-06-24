@@ -14,7 +14,10 @@ class BPE(Model):
                continuing_subword_prefix=None,
                end_of_word_suffix=None,
                fuse_unk=None):
-        self._model = C.models.BPE(vocab)
+        self._model = C.models.BPE(vocab, merges, 
+                    cache_capacity, dropout, 
+                    unk_token, continuing_subword_prefix, 
+                    end_of_word_suffix, fuse_unk)
     
     @staticmethod
     def read_file(vocab_path: str, merges_path: str):

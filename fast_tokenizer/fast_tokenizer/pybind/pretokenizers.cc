@@ -165,20 +165,24 @@ void BindPreTokenizers(pybind11::module* m) {
                                                           "PreTokenizer")
       .def(py::init<>())
       .def("__call__", &pretokenizers::PreTokenizer::operator());
+  
   py::class_<pretokenizers::WhitespacePreTokenizer, PyWhitespacePreTokenizer>(
       sub_module, "WhitespacePreTokenizer")
       .def(py::init<>())
       .def("__call__", &pretokenizers::WhitespacePreTokenizer::operator());
+  
   py::class_<pretokenizers::WhitespaceAndPunctuationPreTokenizer,
              PyWhitespaceAndPunctuationPreTokenizer>(
       sub_module, "WhitespaceAndPunctuationPreTokenizer")
       .def(py::init<>())
       .def("__call__",
            &pretokenizers::WhitespaceAndPunctuationPreTokenizer::operator());
+  
   py::class_<pretokenizers::BertPreTokenizer, PyBertPreTokenizer>(
       sub_module, "BertPreTokenizer")
       .def(py::init<>())
       .def("__call__", &pretokenizers::BertPreTokenizer::operator());
+      
   py::class_<pretokenizers::MetaSpacePreTokenizer, PyMetaSpacePreTokenizer>(
       sub_module, "MetaSpacePreTokenizer")
       .def(py::init<const std::string&, bool>(),

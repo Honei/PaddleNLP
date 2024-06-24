@@ -7,6 +7,7 @@
 #include <sstream>
 #include "nlohmann/json.hpp"
 #include "glog/logging.h"
+#include "../utils/utf8.h"
 namespace leomax_tokenizer {
 namespace models {
 
@@ -70,10 +71,13 @@ void BPE::init(const core::Merges& merges) {
         }
     }
 
+    VLOG(6) << "unk token size= " << unk_token_.size(); 
     if (unk_token_.size() > 0) {
         try {
             // 添加 unk_token 到unk_token_id_ 中
+            VLOG(6) << "start to fetch the unk id";
             unk_token_id_.emplace_back(vocab_.at(unk_token_.front()));
+            VLOG(6) << "unk_token_id_ back= " << unk_token_id_.back();
         } catch (...) {
             std::ostringstream oss;
             oss << "Unk token " << unk_token_.front() << " not found in vocab";
@@ -84,13 +88,17 @@ void BPE::init(const core::Merges& merges) {
 
 void BPE::tokenize_with_cache(const std::string& text, std::vector<core::Token>* tokens) {
     core::BPEWord bpe_word;
+    VLOG(6) << "BPE::tokeniz_with_cache, text= " << text;
     // 判断文本是否在缓存中,如果改文本在合并规则中,那么直接获取拆分之后的词
     if (cache_.get_value(text, &bpe_word)) {
         // 将词转换为token
+        VLOG(6) << "BPE::tokeniz_with_cache, get from cache, text= " << text;
         word_to_tokens(bpe_word, tokens);
     } else {
         // 根据合并规则，将文本拆分成多个词
+        VLOG(6) << "BPE::tokeniz_with_cache, start to merge the text, text= " << text;
         merge_word(text, &bpe_word);
+        
         // 将每个词转换为token
         word_to_tokens(bpe_word, tokens);
         // 将词加入缓存
@@ -102,21 +110,91 @@ void BPE::word_to_tokens(const core::BPEWord& bpe_word, std::vector<core::Token>
 
 }
 
-void BPE::merge_word(const std::string& word1, core::BPEWord* bpe_word) {
+void BPE::merge_word(const std::string& word, core::BPEWord* bpe_word) {
+    VLOG(6) << "BPE::merge_word, word1= " << word;
+    std::vector<std::pair<uint32_t, size_t>> unk;
+    bpe_word->reserve(word.length());       // bpe_word 的最大长度为文本word的长度
+    uint32_t start = 0;
+    while (start < word.length()) {
+        uint32_t content_char;
+        uint32_t content_char_width = 
+                 utils::utf8_to_uint32(word.data() + start, &content_char);
+        content_char = utils::utf8_to_unicode(content_char);
+        VLOG(6) << "start= " << start 
+                << ", content_char_width= " << content_char_width 
+                << ", content_char= " << content_char;
+        uint32_t end = start + content_char_width;
+        
+        bool is_first = (start == 0);   // 是否是开头的第一个字符
+        bool is_last = (end >= word.length()); // 是否已经到了最后的长度
+        std::string curr_str = word.substr(start, content_char_width);      // 截取一个字符串
 
+        VLOG(6) << "is_first= " << is_first 
+                << ", is_last= " << is_last
+                << ", curr_str= " << curr_str;
+        if (!is_first) {    // 不是开头字符，可以加入链接的字符串
+            if (this->continuing_subword_prefix_.size() > 0) {
+                curr_str = this->continuing_subword_prefix_.front() + curr_str;
+            }
+        }
+
+        if (is_last) {  // 最后的字符串要加上结束符号
+            if (this->end_of_word_suffix_.size() > 0) {
+                curr_str = curr_str + this->end_of_word_suffix_.front();
+            }
+        }
+
+        if (this->vocab_.find(curr_str) != this->vocab_.end()) {
+            VLOG(6) << "curr_str= " << curr_str << " in the vocab";
+            if (unk.size() > 0) {
+                bpe_word->add(unk.front().first, unk.front().second);
+                unk.clear();
+            }
+
+            auto id = this->vocab_.at(curr_str);
+            bpe_word->add(id, content_char_width);
+        } else {
+            VLOG(6) << "curr_str= " << curr_str << " not in the vocab !!!!!";
+            VLOG(6) << "unk_token_id_= " << unk_token_id_.size();
+            if (unk_token_id_.size() > 0) {
+                if (unk.size() == 0) {
+                    VLOG(6) << "unk size=0";
+                    unk.push_back({unk_token_id_.front(), content_char_width});
+                    VLOG(6) << "unk_token_id_.front= " << unk_token_id_.front();
+                } else {
+                    VLOG(6) << "fuse_unk= " << fuse_unk_;
+                    if (fuse_unk_) {
+                        unk[0] = {unk[0].first, unk[0].second + content_char_width};
+                    } else {
+                        bpe_word->add(unk[0].first, unk[0].second);
+                        VLOG(6) << "unk_token_id_.front= " << unk_token_id_.front();
+                        unk[0] = {unk_token_id_.front(), content_char_width};
+                    }
+                }
+            }
+        }
+
+        start = end;
+    }
+    if (unk.size() > 0) {
+        bpe_word->add(unk.front().first, unk.front().second);
+    }
+    bpe_word->merge_all(merges_, dropout_);
 }
 
 std::vector<core::Token> BPE::tokenize(const std::string& text) {
     std::vector<core::Token> tokens;
-    std::cout << "BPE tokenizer " << std::endl;
-    std::cout << "text: " << text << std::endl;
+    VLOG(6) << "BPE tokenizer, text= " << text;
 
     if (text.empty()) {
         return tokens;
     }
 
     if (dropout_.empty()) {
+        tokenize_with_cache(text, &tokens);
         return tokens;
+    } else {
+        VLOG(6) << "BPE tokenizer with dropout";
     }
 
 

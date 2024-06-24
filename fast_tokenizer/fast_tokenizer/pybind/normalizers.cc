@@ -169,14 +169,15 @@ void BindNormalizers(pybind11::module* m) {
            },
            py::arg("sequence"))
       .def("__call__", &normalizers::Normalizer::operator());
-  py::class_<normalizers::BertNormalizer, PyBertNormalizer>(submodule,
-                                                            "BertNormalizer")
-      .def(py::init<bool, bool, bool, bool>(),
-           py::arg("clean_text") = true,
-           py::arg("handle_chinese_chars") = true,
-           py::arg("strip_accents") = true,
-           py::arg("lowercase") = true)
-      .def(py::init([](bool clean_text,
+  
+	py::class_<normalizers::BertNormalizer, PyBertNormalizer>(submodule,
+																"BertNormalizer")
+		.def(py::init<bool, bool, bool, bool>(),
+			py::arg("clean_text") = true,
+			py::arg("handle_chinese_chars") = true,
+			py::arg("strip_accents") = true,
+			py::arg("lowercase") = true)
+      	.def(py::init([](bool clean_text,
                        bool handle_chinese_chars,
                        const py::object& strip_accents_obj,
                        bool lowercase) {

@@ -198,6 +198,7 @@ public:
                         OffsetType offset_type,
                         Encoding* encodings) const;
   // Encode single raw text
+  // 对原始的文本进行编码
   void EncodeSingleText(const std::string& raw_text,
                         uint32_t type_id,
                         OffsetType offset_type,

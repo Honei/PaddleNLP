@@ -5,6 +5,7 @@
 #include "pymodels.h"
 #include "pytokens.h"
 #include "../core/cache.h"
+#include "glog/logging.h"
 namespace py = pybind11;
 namespace leomax_tokenizer {
 namespace pybind {

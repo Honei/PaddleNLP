@@ -52,35 +52,35 @@ struct FASTTOKENIZER_DECL WordPiece : public Model {
       const std::string& continuing_subword_prefix = "##");
 
 protected:
-  core::Vocab vocab_;
-  core::VocabReversed vocab_reversed_;
-  std::string unk_token_;
-  uint32_t unk_token_id_;
-  size_t max_input_chars_per_word_;
-  std::string continuing_subword_prefix_;
-  bool handle_chinese_chars_;
-  friend void to_json(nlohmann::json& j, const WordPiece& model);
-  friend void from_json(const nlohmann::json& j, WordPiece& model);
+    core::Vocab vocab_;
+    core::VocabReversed vocab_reversed_;
+    std::string unk_token_;
+    uint32_t unk_token_id_;
+    size_t max_input_chars_per_word_;
+    std::string continuing_subword_prefix_;
+    bool handle_chinese_chars_;
+    friend void to_json(nlohmann::json& j, const WordPiece& model);
+    friend void from_json(const nlohmann::json& j, WordPiece& model);
 };
 
 struct WordPieceConfig {
-  WordPieceConfig();
-  std::string files_;
-  core::Vocab vocab_;
-  std::string unk_token_;
-  size_t max_input_chars_per_word_;
-  std::string continuing_subword_prefix_;
+    WordPieceConfig();
+    std::string files_;
+    core::Vocab vocab_;
+    std::string unk_token_;
+    size_t max_input_chars_per_word_;
+    std::string continuing_subword_prefix_;
 };
 
 
 struct WordPieceFactory {
-  WordPieceConfig config_;
-  void SetFiles(const std::string& files);
-  void SetUNKToken(const std::string& unk_token);
-  void SetMaxInputCharsPerWord(size_t max_input_chars_per_word);
-  void SetContinuingSubwordPrefix(const std::string& continuing_subword_prefix);
-  WordPiece CreateWordPieceModel();
-  void GetVocabFromFiles(const std::string& files);
+    WordPieceConfig config_;
+    void SetFiles(const std::string& files);
+    void SetUNKToken(const std::string& unk_token);
+    void SetMaxInputCharsPerWord(size_t max_input_chars_per_word);
+    void SetContinuingSubwordPrefix(const std::string& continuing_subword_prefix);
+    WordPiece CreateWordPieceModel();
+    void GetVocabFromFiles(const std::string& files);
 };
 
 }  // namespace models

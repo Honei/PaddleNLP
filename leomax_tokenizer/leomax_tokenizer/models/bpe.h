@@ -15,7 +15,7 @@ class BPE : public Model {
 public:
     BPE();
     BPE(const core::Vocab& vocab,
-        const core::Merges& merges,
+        const core::Merges& merges = {},
         size_t cache_capacity = core::DEFAULT_CACHE_CAPACITY,
         const std::vector<float>& dropout = {},
         const std::vector<std::string>& unk_token = {},
@@ -42,7 +42,7 @@ private:
     core::Vocab vocab_;
     core::VocabReversed vocab_reversed_;
     core::MergeMap merges_;
-    core::Cache<std::string, core::BPEWord> cache_;
+    core::Cache<std::string, core::BPEWord> cache_;     // 记录已经编码过的字符串，避免重复编码，提高效率
     std::vector<float> dropout_;
     std::vector<std::string> unk_token_;
     std::vector<uint32_t> unk_token_id_;
